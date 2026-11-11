@@ -1,0 +1,189 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+    DubaiBy | چت بات
+{% endblock %}
+
+{% block css_code %}
+    <style>
+        .chat-box {
+            min-height: 100vh;
+            padding: 1.8rem 0 0 0;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #E1E6F0;
+            color: #000000;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #cdcfd9;
+            color: #000000;
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            margin-top: 15px;
+            position: fixed;
+            bottom: 5px;
+            right: 0;
+            padding: 0 1rem;
+        }
+
+        .chat-input button {
+            background-color: #22b3c1;
+            border-color: #22b3c1;
+        }
+
+        .chat-input button:hover {
+            background-color: #22b3c1;
+            border-color: #22b3c1;
+        }
+
+        .chat-message h1, h2, h3, h4, h5, h6 {
+            font-size: 1rem;
+        }
+
+        .chat-message p {
+            color: #000;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="container d-flex flex-column chat-box mt-5">
+        <!-- Chat Messages -->
+        <div class="chat-container d-flex flex-column" id="chat-container">
+            {% for message in messages %}
+                <!-- User Message -->
+                <div class="chat-message user-message">{{ message.user_message }}</div>
+                <!-- Bot Message -->
+                <div class="chat-message bot-message">{{ message.bot_message|safe }}</div>
+            {% endfor %}
+        </div>
+        {% if not request.user.is_authenticated %}
+            <div class="alert alert-success">
+                برای یه تجربه خوب و کامل <a href="{% url 'account:register' %}">وارد اکانتت شو</a>!
+            </div>
+        {% endif %}
+
+        <!-- Chat Input -->
+        <div class="chat-input input-group" dir="rtl">
+            <button class="btn btn-light-facebook" id="chat-send" dir="ltr"><i class="fa fa-paper-plane"></i></button>
+            <input type="text" class="form-control p-3" placeholder="پیام..." dir="rtl" id="chatbot">
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_code %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth"
+            });
+        });
+
+
+        const chatContainer = document.getElementById('chat-container');
+        const chatbotInput = document.getElementById('chatbot');
+        const chatBtn = document.getElementById("chat-send");
+
+        const chatAjax = async (userMessage) => {
+            const userMessageElement = document.createElement('div');
+            userMessageElement.className = 'chat-message user-message';
+            userMessageElement.textContent = userMessage;
+            chatContainer.appendChild(userMessageElement);
+
+            const botMessageElement = document.createElement('div');
+            botMessageElement.className = 'chat-message bot-message';
+            botMessageElement.innerHTML = 'در حال پاسخ...';
+            chatContainer.appendChild(botMessageElement);
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({message: userMessage}),
+                });
+
+                const data = await response.json();
+                let replyHtml = `<p>${data.reply}</p>`;
+
+                if (data.results) {
+                    console.log(data)
+                    // hotels
+                    if (data.results.hotels?.length) {
+                        replyHtml += `<h5>🏨 هتل‌های پیشنهادی DubaiBy:</h5><ul>`;
+                        data.results.hotels.forEach(hotel => {
+                            replyHtml += `<li><a href="/travel/hotels/${hotel.id}/${hotel.title}" target="_blank">${hotel.title}</a></li>`;
+                        });
+                        replyHtml += `</ul>`;
+                    }
+
+                    // tours
+                    if (data.results.tours?.length) {
+                        replyHtml += `<h5>🧳 تورهای پیشنهادی:</h5><ul>`;
+                        data.results.tours.forEach(tour => {
+                            replyHtml += `<li><a href="/travel/tours/${tour.id}/${tour.title}" target="_blank">${tour.title}</a></li>`;
+                        });
+                        replyHtml += `</ul>`;
+                    }
+
+                    // flights
+                    if (data.results.flights?.length) {
+                        replyHtml += `<h5>✈️ پروازهای پیشنهادی:</h5><ul>`;
+                        data.results.flights.forEach(flight => {
+                            replyHtml += `<li><a href="/travel/flight/" target="_blank">${flight.origin} به ${flight.destination}</a></li>`;
+                        });
+                        replyHtml += `</ul>`;
+                    }
+                }
+
+                botMessageElement.innerHTML = replyHtml;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            } catch (error) {
+                console.error("Error communicating with assistant:", error);
+                botMessageElement.textContent = 'خطا در ارتباط با سرور. لطفا دوباره تلاش کنید.';
+            }
+        };
+
+        chatBtn.addEventListener('click', (event) => {
+            const userMessage = chatbotInput.value.trim();
+            chatbotInput.value = ''; // Clear the input field
+            chatAjax(userMessage)
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+
+        if (message) {
+            chatAjax(message);
+        }
+
+
+    </script>
+{% endblock %}

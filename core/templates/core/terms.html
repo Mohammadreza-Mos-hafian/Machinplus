@@ -1,0 +1,307 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>مجله صنعت | قوانین و مقررات</title>
+    <meta name="description"
+          content="مقالات تخصصی درباره خرید ماشین‌آلات صنعتی، نگهداری و تعمیرات، تحلیل بازار و فناوری‌های نوین تولید به زبان فارسی."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {sans: ['Vazirmatn', 'system-ui', 'sans-serif']},
+                    colors: {
+                        background: 'oklch(0.975 0.005 240)',
+                        foreground: 'oklch(0.22 0.025 250)',
+                        surface: '#ffffff',
+                        'surface-muted': 'oklch(0.965 0.008 240)',
+                        border: 'oklch(0.90 0.012 245)',
+                        muted: 'oklch(0.955 0.008 240)',
+                        'muted-foreground': 'oklch(0.48 0.015 250)',
+                        primary: 'oklch(0.38 0.08 250)',
+                        'primary-foreground': '#fff',
+                        'primary-dark': 'oklch(0.28 0.07 252)',
+                        accent: 'oklch(0.68 0.15 60)',
+                        'accent-foreground': 'oklch(0.18 0.02 250)',
+                    },
+                    boxShadow: {
+                        soft: '0 1px 2px rgba(20,35,60,.04), 0 4px 16px rgba(20,35,60,.06)',
+                        elevated: '0 4px 12px rgba(20,35,60,.08), 0 16px 40px rgba(20,35,60,.10)',
+                        glow: '0 8px 32px rgba(31,78,121,.25)',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+            background: oklch(0.965 0.008 240);
+            color: oklch(0.22 0.025 250);
+            -webkit-font-smoothing: antialiased
+        }
+
+        h1, h2, h3, h4 {
+            letter-spacing: -0.01em
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-surface-muted">
+
+<header class="sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white font-extrabold">م+</span>
+            <span class="font-extrabold text-foreground">ماشین پلاس</span>
+        </a>
+        <nav aria-label="ناوبری اصلی" class="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-foreground">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="transition-colors hover:text-foreground">مجله</a>
+            <a href="{% url 'blog:list' %}" class="transition-colors hover:text-foreground">درباره ما</a>
+            <a href="{% url 'core:contact-us' %}" class="font-semibold text-foreground">تماس با ما</a>
+        </nav>
+        <a href="{% url 'core:inquiry' %}"
+           class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            مشاوره رایگان
+        </a>
+    </div>
+</header>
+
+<section class="border-b border-border bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div class="min-w-0">
+                <h1 class="text-1xl font-extrabold text-foreground sm:text-4xl">ماشین پلاس</h1>
+                <p class="mt-2 text-sm leading-10 text-muted-foreground sm:text-1xl">
+                    راهکار جامع تامین و نوسازی ماشین آلات و راه اندازی خطوط تولید پرسود
+                </p>
+                <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                    <span class="h-1 w-1 rounded-full bg-accent"></span>
+                    از مشاوره راه اندازی خط تولید تا خرید و نوسازی دستگاه های صنعتی
+                </div>
+            </div>
+        </div>
+        <nav aria-label="دسته‌بندی مقالات" id="cats" class="mt-6 flex flex-wrap gap-2"></nav>
+    </div>
+</section>
+
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+
+    <div id="results">
+        <div class="mt-12">
+            <section
+                    class="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-primary-dark p-6 shadow-elevated sm:p-8">
+                <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                    <div class="min-w-0">
+                        <main class="w-full max-w-4xl mx-auto px-4 py-10" dir="rtl">
+                            <!-- هدر صفحه -->
+                            <header class="border-b border-white-200 pb-6 mb-8">
+                                <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">قوانین و مقررات ماشین
+                                    پلاس</h1>
+                                <p class="text-sm md:text-base text-white leading-relaxed">
+                                    به وب‌سایت <strong class="text-white-900 font-semibold">ماشین پلاس</strong> خوش
+                                    آمدید. استفاده از خدمات، فرم‌های استعلام و ثبت درخواست در این وب‌سایت به معنای آگاهی
+                                    کامل و پذیرش کلیه شرایط و قوانین مندرج در این صفحه است.
+                                </p>
+                            </header>
+
+                            <div class="space-y-8 leading-relaxed text-sm md:text-base">
+
+                                <!-- بند ۱ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۱. تعاریف و کلیات
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li><strong>سایت:</strong> وب‌سایت ماشین پلاس به آدرس اینترنتی <span dir="ltr"
+                                                                                                             class="text-blue-600 font-mono text-sm">machinplus.ir</span>.
+                                        </li>
+                                        <li><strong>کاربر / خریدار:</strong> هر شخص حقیقی یا حقوقی که از طریق سایت اقدام
+                                            به تکمیل فرم، استعلام قیمت، ثبت درخواست مشاوره یا خرید ماشین‌آلات می‌نماید.
+                                        </li>
+                                        <li>کلیه فرآیندها و فعالیت‌های ماشین پلاس منطبق با قوانین جمهوری اسلامی ایران،
+                                            قانون تجارت الکترونیک و قانون حمایت از حقوق مصرف‌کننده است.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۲ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۲. سیاست حفظ حریم خصوصی
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li>ماشین پلاس متعهد می‌شود اطلاعات هویتی، شماره تماس و اطلاعات صنعتی/فنی
+                                            ثبت‌شده توسط کاربران در فرم‌های نیازسنجی و استعلام را کاملاً محرمانه نگه
+                                            دارد و در اختیار شخص ثالث قرار ندهد.
+                                        </li>
+                                        <li>استفاده از اطلاعات کاربران صرفاً جهت برقراری تماس، ارائه مشاوره تخصصی، صدور
+                                            پیش‌فاکتور و اطلاع‌رسانی فرآیندهای سفارش خواهد بود.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۳ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۳. ثبت درخواست، مشاوره و استعلام قیمت
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li>اطلاعات ثبت‌شده در فرم‌های نیازسنجی و استعلام باید معتبر و متعلق به متقاضی
+                                            باشد. مسئولیت صحت اطلاعات بر عهده کاربر است.
+                                        </li>
+                                        <li>با توجه به نوسانات بازار ماشین‌آلات و تجهیزات صنعتی، قیمت‌ها و پیش‌فاکتورهای
+                                            ارائه‌شده دارای مهلت اعتبار مشخص بوده و پس از اتمام تاریخ اعتبار، استعلام
+                                            مجدد الزامی است.
+                                        </li>
+                                        <li>ثبت اولیه درخواست یا تکمیل فرم نیازسنجی، تعهدی برای طرفین در تحویل کالا
+                                            ایجاد نمی‌کند و معامله پس از صدور پیش‌فاکتور رسمی، واریز پیش‌پرداخت و تایید
+                                            نهایی کارشناسان معتبر خواهد بود.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۴ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۴. فرآیند پرداخت و صدور فاکتور
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li>کلیه پرداخت‌ها از طریق درگاه‌های پرداخت امن بانکی متصل به سایت، شماره
+                                            حساب‌های حقوقی یا حساب‌های رسمی اعلام‌شده توسط ماشین پلاس انجام می‌پذیرد.
+                                        </li>
+                                        <li>فاکتور رسمی به همراه مشخصات کامل دستگاه، شماره سریال و تعهدات فنی پس از
+                                            نهایی شدن قرارداد صادر خواهد شد.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۵ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۵. شرایط ارسال و تحویل ماشین‌آلات
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li>تحویل دستگاه‌ها طبق زمان‌بندی توافق‌شده در پیش‌فاکتور/قرارداد انجام
+                                            می‌گیرد.
+                                        </li>
+                                        <li>بارگیری، بیمه حمل‌ونقل و تحویل فیزیکی ماشین‌آلات متناسب با توافق انجام‌شده
+                                            (تحویل در انبار، کارخانه سازنده یا محل پروژه مشتری) صورت می‌پذیرد.
+                                        </li>
+                                        <li>خریدار موظف است هنگام تحویل کالا، سلامت فیزیکی دستگاه و تطابق آن با مشخصات
+                                            مندرج در فاکتور را بررسی و رسید تحویل را امضا نماید.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۶ -->
+                                <section class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۶. گارانتی، خدمات پس از فروش و شرایط انصراف
+                                    </h2>
+                                    <ul class="list-disc list-inside space-y-2 pr-2">
+                                        <li>کلیه ماشین‌آلات متناسب با نوع دستگاه، دارای گارانتی اصالت، سلامت فنی و دوره
+                                            پشتیبانی/تامین قطعات مندرج در برگه ضمانت‌نامه هستند.
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <!-- بند ۸ (اطلاعات تماس و تایید اینماد) -->
+                                <section class="bg-blue-50/50 rounded-xl p-6 border border-blue-100 text-gray-800">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                                        ۸. پشتیبانی و پاسخگویی
+                                    </h2>
+                                    <p class="mb-4">کاربران محترم می‌توانند در صورت داشتن هرگونه سوال، پیگیری سفارش یا
+                                        ثبت شکایات، از طریق راه‌های ارتباطی زیر با ما در تماس باشند:</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                        <div class="bg-white p-3 rounded-lg border border-gray-100">
+                                            <span class="font-semibold text-gray-900">تلفن تماس / پشتیبانی:</span>
+                                            <span dir="ltr"
+                                                  class="text-gray-700 block mt-1">09350627286</span>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-100">
+                                            <span class="font-semibold text-gray-900">ایمیل پشتیبانی:</span>
+                                            <span dir="ltr" class="text-gray-700 block mt-1">info@machinplus.ir</span>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-100 md:col-span-2">
+                                            <span class="font-semibold text-gray-900">نشانی پستی:</span>
+                                            <span class="text-gray-700 block mt-1">کرج، ابتدای بلوار چمران، مجتمع بل سنتر، واحد 502</span>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-100 md:col-span-2">
+                                            <span class="font-semibold text-gray-900">ساعت پاسخگویی:</span>
+                                            <span class="text-gray-700 block mt-1">شنبه تا پنجشنبه از ساعت ۹:۰۰ الی ۱۷:۰۰</span>
+                                        </div>
+                                    </div>
+                                </section>
+
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </section>
+            <section
+                    class="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-primary-dark p-6 shadow-elevated sm:p-8">
+                <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                    <div class="min-w-0">
+                        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
+                            <span class="h-1 w-1 rounded-full bg-accent"></span> مشاوره هوشمند
+                        </div>
+                        <h2 class="text-lg font-extrabold text-white sm:text-xl">اندازی یک کسب و کار پرسود و شروع
+                            تولید</h2>
+                        <p class="mt-2 max-w-xl text-sm leading-7 text-white/80">برای شروع یک کسب و کار تولیدی پرسود
+                            همین حالا این فرم را پر کنید و از مشاوره هوشمند ماشین پلاس استفاده کنید</p>
+                    </div>
+                    <a href="{% url 'core:inquiry' %}"
+                       class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98]">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                             stroke-linecap="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                        شروع مشاوره رایگان
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer class="mt-10 border-t border-border bg-white py-8">
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۵ ماشین پلاس —
+        مجله صنعت
+    </div>
+</footer>
+
+</body>
+</html>

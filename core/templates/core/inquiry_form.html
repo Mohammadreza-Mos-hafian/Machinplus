@@ -1,0 +1,592 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>ماشین پلاس | پرسشنامه ارزیابی و نیازسنجی خریداران صنعتی</title>
+    <meta name="description"
+          content="ماشین پلاس، راهکار جامع تامین و نوسازی ماشین آلات صنعتی با امکان خرید اعتباری."/>
+
+    <!-- Indexing & Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="keywords"
+          content="ماشین پلاس, ماشین آلات صنعتی, خرید دستگاه HF, دستگاه مکمل خط تولید, لیزینگ ماشین آلات صنعتی, مشاوره خرید تجهیزات صنعتی, تجهیز خط تولید">
+
+    <!-- Author & Publisher -->
+    <meta name="author" content="ماشین پلاس">
+    <meta name="publisher" content="ماشین پلاس">
+
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --navy-950: #0B1620;
+            --navy-900: #0F1E2E;
+            --navy-800: #16222F;
+            --navy-700: #1E2E3D;
+            --gold-500: #D99B26;
+            --gold-400: #E6B04D;
+            --gold-600: #B87E17;
+            --paper: #F8FAFC;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--paper);
+            color: var(--navy-900);
+        }
+
+        .font-display {
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .header-safe {
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .navy-grad {
+            background: linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 55%, var(--navy-800) 100%);
+        }
+
+        .gold-grad {
+            background: linear-gradient(95deg, var(--gold-600), var(--gold-400));
+        }
+
+        .dot-gold {
+            background: var(--gold-500);
+        }
+
+        .glow-focus:focus {
+            outline: none;
+            border-color: var(--gold-500);
+            box-shadow: 0 0 0 4px rgba(217, 155, 38, 0.16);
+        }
+
+        .card-choice {
+            transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+        }
+
+        .card-choice:hover {
+            border-color: #D6B98A;
+        }
+
+        .card-choice.selected {
+            border-color: var(--gold-500);
+            background-color: rgba(217, 155, 38, 0.06);
+            box-shadow: 0 0 0 3px rgba(217, 155, 38, 0.12);
+        }
+
+        .card-choice.selected .check-dot {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .check-dot {
+            opacity: 0;
+            transform: scale(.5);
+            transition: all .16s ease;
+        }
+
+        .step-fill {
+            transition: width .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .step-panel {
+            animation: fadeSlide .38s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .badge-num {
+            width: 2.1rem;
+            height: 2.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: .8rem;
+            transition: all .25s ease;
+            flex-shrink: 0;
+        }
+
+        ::selection {
+            background: rgba(217, 155, 38, 0.25);
+        }
+
+        .letter-chip {
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: .5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .step-panel {
+                animation: none;
+            }
+
+            .card-choice {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="navy-grad header-safe sticky top-0 z-40 border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-lg gold-grad flex items-center justify-center font-display text-sm"
+                 style="color:#20140A">م+
+            </div>
+            <span class="font-display text-white text-[15px] md:text-base">ماشین پلاس</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-7 text-[13.5px] text-slate-300">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-foreground">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">مجله</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">درباره ما</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">تماس با ما</a>
+        </nav>
+        <button class="text-[13px] font-semibold px-4 py-2 rounded-lg hover:brightness-105 transition"
+                style="color:#20140A">
+        </button>
+    </div>
+</header>
+
+<!-- MAIN -->
+<main class="flex-1 navy-grad relative overflow-hidden">
+    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-[0.12]"
+         style="background:radial-gradient(circle, var(--gold-500), transparent 70%)"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full opacity-[0.10]"
+         style="background:radial-gradient(circle, var(--gold-500), transparent 70%)"></div>
+
+    <div class="relative max-w-3xl mx-auto px-5 md:px-8 py-10 md:py-14">
+        <div class="text-center mb-8">
+      <span class="inline-flex items-center gap-2 text-[12.5px] text-amber-300/90 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full mb-4">
+        <span class="w-1.5 h-1.5 rounded-full dot-gold"></span>راه اندازی خط تولید خانگی، کارگاهی و صنعتی
+      </span>
+            <h1 class="font-display text-2xl md:text-[32px] text-white leading-relaxed">مشاوره راه اندازی خط تولید</h1>
+            <p class="text-slate-400 text-sm md:text-[15px] mt-2 max-w-lg mx-auto">با تکمیل این پرسشنامه، کارشناسان
+                ماشین پلاس دقیق‌ترین پیشنهاد را برای کسب و کار شما آماده می‌کنند.</p>
+        </div>
+
+        <!-- STEP PROGRESS -->
+        <div class="mb-7">
+            <div class="flex items-center justify-between max-w-2xl mx-auto" id="stepIndicators"></div>
+            <div class="h-1 bg-white/10 rounded-full mt-3 max-w-2xl mx-auto overflow-hidden">
+                <div id="progressBar" class="h-full gold-grad step-fill" style="width:20%"></div>
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)] p-6 md:p-9 min-h-[420px] flex flex-col">
+            <form id="wizardForm" class="flex-1 flex flex-col" novalidate>
+                <div id="stepsContainer"></div>
+
+                <!-- NAV BUTTONS -->
+                <div class="flex items-center justify-between mt-7 pt-5 border-t border-slate-100">
+                    <button type="button" id="prevBtn"
+                            class="text-[13.5px] font-medium text-slate-500 hover:text-slate-700 px-4 py-2.5 rounded-lg transition disabled:opacity-0 disabled:pointer-events-none">
+                        قبلی
+                    </button>
+                    <button type="button" id="nextBtn"
+                            class="gold-grad text-[14px] font-semibold px-6 py-2.5 rounded-xl transition hover:brightness-105 disabled:opacity-40 disabled:cursor-not-allowed"
+                            style="color:#20140A">بعدی
+                    </button>
+                    <button type="submit" id="submitBtn"
+                            class="hidden gold-grad text-[14px] font-semibold px-6 py-2.5 rounded-xl transition hover:brightness-105 disabled:opacity-40"
+                            style="color:#20140A">
+                        <span id="submitLabel">ثبت نهایی و دریافت مشاوره</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4"
+     style="background:rgba(11,22,32,0.72)">
+    <div class="border border-amber-400/25 rounded-2xl max-w-sm w-full p-7 text-center shadow-2xl"
+         style="background:var(--navy-900)">
+        <div class="w-14 h-14 rounded-full gold-grad flex items-center justify-center mx-auto mb-4 text-2xl"
+             style="color:#20140A">✓
+        </div>
+        <h3 class="font-display text-white text-lg mb-2">درخواست شما با موفقیت ثبت شد</h3>
+        <p class="text-slate-400 text-[13.5px] leading-relaxed mb-6">کارشناسان ماشین پلاس بر اساس پاسخ‌های شما، پیشنهاد
+            فنی و مالی را آماده کرده و به‌زودی جهت مشاوره تماس خواهند گرفت.</p>
+        <button id="closeModal" class="gold-grad w-full py-2.5 rounded-xl font-semibold text-[14px]"
+                style="color:#20140A">متوجه شدم
+        </button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5" style="background:var(--navy-950)">
+    <div class="max-w-6xl mx-auto px-5 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[12.5px] text-slate-500">
+        <span>© 2026 ماشین پلاس. تمامی حقوق محفوظ است.</span>
+        <div class="flex items-center gap-5">
+            <a href="{% url 'core:home' %}" class="hover:text-slate-300 transition-colors">صفحه اصلی</a>
+            <a href="{% url 'core:terms' %}" class="hover:text-slate-300 transition-colors">قوانین و مقررات</a>
+            <a href="tel:09350627286" dir="ltr">تماس: 09350627286</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    (function () {
+        const LETTERS = ['الف', 'ب', 'ج', 'د'];
+
+        const QUESTIONS = [
+            {
+                id: 'q1', type: 'radio', title: 'هدف اصلی شما از تامین ماشین‌آلات صنعتی در حال حاضر چیست؟', options: [
+                    'راه اندازی کسب و کار خانگی', 'توسعه و افزایش ظرفیت تولید فعلی', 'جایگزینی ماشین آلات فرسوده', 'راه اندازی یک واحد تولیدی'
+                ]
+            },
+            {
+                id: 'q2',
+                type: 'radio',
+                title: 'بازه زمانی تصمیم گیری و خرید نهایی شما برای تامین ماشین آلات چه مدت است؟',
+                options: [
+                    'کمتر از یک ماه (خرید فوری)', 'بین یک تا سه ماه', 'بین سه تا شش ماه', 'بیش از شش ماه'
+                ]
+            },
+            {
+                id: 'q3',
+                type: 'radio',
+                title: 'وضعیت تامین بودجه و اعتبارات مالی پروژه شما در چه مرحله‌ای قرار دارد؟',
+                options: [
+                    'بودجه به طور کامل تامین شده و آماده پرداخت است', 'بخشی از بودجه تامین شده و مابقی از طریق تسهیلات تامین می‌شود', 'در حال رایزنی برای دریافت وام و تسهیلات بانکی هستیم', 'بودجه هنوز مصوب نشده و در مرحله برآورد هزینه هستیم'
+                ]
+            },
+            {
+                id: 'q4',
+                type: 'radio',
+                title: 'حجم سرمایه‌گذاری مد نظر شما برای خرید ماشین‌آلات در چه حدودی است؟',
+                options: [
+                    'کمتر از ۵۰۰ میلیون تومان', 'از ۵۰۰ میلیون تا ۲ میلیارد تومان', 'از ۲ میلیارد تا ۵ میلیارد تومان', 'بیش از ۵ میلیارد تومان'
+                ]
+            },
+            {
+                id: 'q5', type: 'radio', title: 'نقش شما در پروسه تصمیم‌گیری برای خرید ماشین‌آلات چیست؟', options: [
+                    'تصمیم گیرنده نهایی و خریدار اصلی', 'مدیر فنی یا مشاور ارشد پروژه', 'مسئول خریدهای تجاری و بازرگانی', 'یکی از شرکای تصمیم گیری'
+                ]
+            },
+            {
+                id: 'q6',
+                type: 'radio',
+                title: 'مجموعه شما از نظر وضعیت حقوقی و فعالیت صنعتی در کدام دسته قرار می‌گیرد؟',
+                options: [
+                    'کارخانه یا کارگاه فعال با سابقه بالای ۳ سال و مجوز از وزارت صمت', 'واحد صنعتی فعال با مجوز از اتحادیه یا اصناف', 'شخصیت حقیقی فعال', 'هنوز کسب وکار خود را راه اندازی نکرده ام'
+                ]
+            },
+            {
+                id: 'q7',
+                type: 'radio',
+                title: 'آیا زیرساخت‌های لازم برای نصب و راه‌اندازی ماشین‌آلات (سوله، برق صنعتی، تاسیسات) آماده است؟',
+                options: [
+                    'بله، تمامی زیرساخت‌ها آماده و مهیا است', 'ساخت زیرساخت‌ها در مراحل پایانی قرار دارد', 'در حال آماده‌سازی و طراحی زیرساخت‌ها هستیم', 'هنوز زمینی یا فضایی برای پروژه تامین نشده است'
+                ]
+            },
+            {
+                id: 'q8', type: 'radio', title: 'اولویت اصلی شما در انتخاب و خرید ماشین‌آلات صنعتی چیست؟', options: [
+                    'کیفیت قطعات، دوام و طول عمر بالای دستگاه', 'خدمات پس از فروش، گارانتی و تامین سریع قطعات', 'قیمت مناسب و شرایط پرداخت اقساطی', 'سرعت در تحویل و ارسال فوری دستگاه'
+                ]
+            },
+            {
+                id: 'q9', type: 'radio', title: 'نوع خریدی که برای مجموعه خود مد نظر دارید به چه صورتی است؟', options: [
+                    'خرید نقدی کامل با استفاده از تخفیف ویژه', 'خرید ترکیبی (بخشی نقدی و بخشی اقساطی)', 'خرید از طریق دریافت تسهیلات بانکی و لیزینگ', 'اجاره به شرط تملیک یا مشارکت'
+                ]
+            },
+            {
+                id: 'q10',
+                type: 'radio',
+                title: 'در صورت تایید مشخصات فنی و قیمت، چه زمانی تمایل به دریافت مشاوره حضوری یا بازدید از دستگاه‌ها دارید؟',
+                options: [
+                    'طی ۴۸ ساعت آینده', 'ظرف یک هفته آینده', 'ماه آینده', 'فعلاً نیازی به مشاوره حضوری ندارم'
+                ]
+            },
+            {
+                id: 'q11',
+                type: 'textarea',
+                title: 'لطفاً نام دقیق، مشخصات فنی یا مدل ماشین‌آلات صنعتی مورد نیاز خود را به همراه میزان ظرفیت مد نظر بنویسید.',
+                placeholder: 'مثلاً: دستگاه برش لیزر فایبر، ظرفیت تولید ۵۰۰ قطعه در روز'
+            },
+            {
+                id: 'q12',
+                type: 'textarea',
+                title: 'اگر شرایط خاصی برای پرداخت، نحوه تحویل یا نیازمندی ویژه‌ای برای سفارشی‌سازی دستگاه دارید، لطفاً شرح دهید.',
+                placeholder: 'اختیاری',
+                optional: true
+            },
+            {id: 'full_name', type: 'text', title: 'نام و نام خانوادگی', placeholder: 'مثلاً: علی رضایی'},
+            {id: 'phone_number', type: 'tel', title: 'شماره تلفن همراه', placeholder: '09xxxxxxxxx'}
+        ];
+
+        const STEPS = [
+            {label: 'شروع پروژه', qs: ['q1', 'q2', 'q3']},
+            {label: 'بودجه و جایگاه', qs: ['q4', 'q5', 'q6']},
+            {label: 'زیرساخت و اولویت', qs: ['q7', 'q8', 'q9', 'q10']},
+            {label: 'جزئیات فنی', qs: ['q11', 'q12']},
+            {label: 'اطلاعات تماس', qs: ['full_name', 'phone_number']}
+        ];
+
+        let current = 1;
+        const total = STEPS.length;
+
+        const indicatorWrap = document.getElementById('stepIndicators');
+        STEPS.forEach((s, i) => {
+            const n = i + 1;
+            const item = document.createElement('div');
+            item.className = 'flex flex-col items-center gap-1.5 flex-1';
+            item.innerHTML = `
+      <div class="badge-num" data-badge="${n}" style="background:rgba(255,255,255,0.08); color:#94A3B8; border:1px solid rgba(255,255,255,0.12)">${n}</div>
+      <span class="text-[10.5px] hidden sm:block text-center" data-label="${n}" style="color:#64748B">${s.label}</span>
+    `;
+            indicatorWrap.appendChild(item);
+        });
+
+        const stepsContainer = document.getElementById('stepsContainer');
+        STEPS.forEach((s, i) => {
+            const n = i + 1;
+            const panel = document.createElement('div');
+            panel.className = 'step-panel' + (n === 1 ? '' : ' hidden');
+            panel.dataset.stepPanel = n;
+
+            let html = '';
+            s.qs.forEach(qid => {
+                const q = QUESTIONS.find(x => x.id === qid);
+                html += `<div class="mb-6 last:mb-0">
+        <h3 class="text-[14.5px] font-medium text-slate-800 mb-3 leading-relaxed">${q.title}${q.optional ? ' <span class="text-slate-400 font-normal text-[12.5px]">(اختیاری)</span>' : ''}</h3>`;
+
+                if (q.type === 'radio') {
+                    html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" data-radio-group="${q.id}">`;
+                    q.options.forEach((opt, idx) => {
+                        html += `<label class="card-choice cursor-pointer border border-slate-200 rounded-xl p-3.5 flex items-center gap-2.5">
+            <input type="radio" name="${q.id}" value="${opt}" class="hidden-input">
+            <span class="letter-chip bg-amber-50 border border-amber-200 text-amber-700">${LETTERS[idx]}</span>
+            <span class="text-[13.5px] text-slate-700 leading-relaxed flex-1">${opt}</span>
+            <span class="check-dot text-amber-500 text-[15px]">✓</span>
+          </label>`;
+                    });
+                    html += `</div><p class="text-rose-500 text-xs mt-1.5 hidden" data-error="${q.id}">یکی از گزینه‌ها را انتخاب کنید.</p>`;
+                } else if (q.type === 'textarea') {
+                    html += `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder || ''}" class="glow-focus w-full border border-slate-300 rounded-xl px-4 py-3 text-[14px] transition-colors resize-none"></textarea>
+          <p class="text-rose-500 text-xs mt-1.5 hidden" data-error="${q.id}">این فیلد الزامی است.</p>`;
+                } else {
+                    html += `<input type="${q.type === 'tel' ? 'tel' : 'text'}" name="${q.id}" ${q.type === 'tel' ? 'inputmode="numeric"' : ''} placeholder="${q.placeholder || ''}" class="glow-focus w-full border border-slate-300 rounded-xl px-4 py-3 text-[14.5px] transition-colors">
+          <p class="text-rose-500 text-xs mt-1.5 hidden" data-error="${q.id}">${q.id === 'phone_number' ? 'شماره موبایل معتبر وارد کنید (مثال: 09121234567).' : 'این فیلد الزامی است.'}</p>`;
+                }
+                html += `</div>`;
+            });
+            panel.innerHTML = html;
+            stepsContainer.appendChild(panel);
+        });
+
+        const form = document.getElementById('wizardForm');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressBar = document.getElementById('progressBar');
+
+        form.querySelectorAll('[data-radio-group]').forEach(group => {
+            group.querySelectorAll('label').forEach(lbl => {
+                lbl.addEventListener('click', () => {
+                    group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+                    lbl.classList.add('selected');
+                    updateNextState();
+                });
+            });
+        });
+
+        function isFieldValid(q) {
+            if (q.optional) return true;
+            if (q.type === 'radio') {
+                return !!form.querySelector(`input[name="${q.id}"]:checked`);
+            }
+            const input = form.querySelector(`[name="${q.id}"]`);
+            const val = (input.value || '').trim();
+            if (q.id === 'phone_number') return /^09\d{9}$/.test(val);
+            return val.length > 1;
+        }
+
+        function currentQuestions() {
+            return STEPS[current - 1].qs.map(id => QUESTIONS.find(q => q.id === id));
+        }
+
+        function updateNextState() {
+            const ok = currentQuestions().every(isFieldValid);
+            nextBtn.disabled = !ok;
+            submitBtn.disabled = !ok;
+        }
+
+        function validateAndShowErrors() {
+            let allOk = true;
+            currentQuestions().forEach(q => {
+                const ok = isFieldValid(q);
+                const errEl = form.querySelector(`[data-error="${q.id}"]`);
+                if (errEl) errEl.classList.toggle('hidden', ok);
+                if (!ok) allOk = false;
+            });
+            return allOk;
+        }
+
+        function refreshIndicators() {
+            for (let n = 1; n <= total; n++) {
+                const badge = indicatorWrap.querySelector(`[data-badge="${n}"]`);
+                const label = indicatorWrap.querySelector(`[data-label="${n}"]`);
+                if (n < current) {
+                    badge.style.background = 'var(--gold-500)';
+                    badge.style.color = '#20140A';
+                    badge.style.border = 'none';
+                    badge.textContent = '✓';
+                    label.style.color = '#CBD5E1';
+                } else if (n === current) {
+                    badge.style.background = 'transparent';
+                    badge.style.color = '#E6B04D';
+                    badge.style.border = '2px solid var(--gold-500)';
+                    badge.textContent = n;
+                    label.style.color = '#E6B04D';
+                } else {
+                    badge.style.background = 'rgba(255,255,255,0.08)';
+                    badge.style.color = '#94A3B8';
+                    badge.style.border = '1px solid rgba(255,255,255,0.12)';
+                    badge.textContent = n;
+                    label.style.color = '#64748B';
+                }
+            }
+            progressBar.style.width = (current / total * 100) + '%';
+        }
+
+        function showStep(step) {
+            stepsContainer.querySelectorAll('[data-step-panel]').forEach(p => {
+                p.classList.toggle('hidden', Number(p.dataset.stepPanel) !== step);
+            });
+            prevBtn.disabled = step === 1;
+            if (step === total) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+            refreshIndicators();
+            updateNextState();
+        }
+
+        form.addEventListener('input', updateNextState);
+        form.addEventListener('change', updateNextState);
+
+        nextBtn.addEventListener('click', () => {
+            if (!validateAndShowErrors()) {
+                updateNextState();
+                return;
+            }
+            if (current < total) {
+                current++;
+                showStep(current);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (current > 1) {
+                current--;
+                showStep(current);
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateAndShowErrors()) return;
+
+            submitBtn.disabled = true;
+            const submitLabel = document.getElementById('submitLabel');
+            const originalText = submitLabel.textContent;
+            submitLabel.textContent = 'در حال ارسال...';
+
+            const data = Object.fromEntries(new FormData(form).entries());
+
+            try {
+                const response = await fetch(window.location.pathname, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('successModal').classList.remove('hidden');
+                    document.getElementById('successModal').classList.add('flex');
+                    form.reset();
+                } else {
+                    alert(result.message || 'خطایی در ثبت اطلاعات رخ داد.');
+                }
+
+            } catch (err) {
+                console.error('Fetch error:', err);
+                alert('خطای ارتباط با سرور. لطفاً اتصال اینترنت را بررسی کنید.');
+            } finally {
+                submitLabel.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            window.location.href = '/';
+        });
+
+        showStep(current);
+    })();
+</script>
+</body>
+</html>

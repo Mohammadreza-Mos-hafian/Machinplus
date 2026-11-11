@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{% block title %}
+    DubaiBy | حساب کاربری
+{% endblock %}
+
+{% block main %}
+    <div class="container my-5 pt-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-4">
+                {% if request.GET.next == '/cart/checkout/' %}
+                    <div class="alert alert-success">
+                        <p class="fw-bold mb-0">برای ادامه فرایند خرید ابتدا وارد حساب خود شوید.</p>
+                    </div>
+                {% endif %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <p class="fw-bold mb-0">{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title fw-bold">ورود به حساب کاربری</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.password|as_crispy_field }}
+                                <a href="" class="text-primary ">فراموشی رمز عبور</a>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-warning">ورود</button>
+                            </div>
+                            <div class="mb-3">
+                                <a href="{% url 'account:register' %}" class="text-primary">حسابی ندارید؟ ثبت نام کنید</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

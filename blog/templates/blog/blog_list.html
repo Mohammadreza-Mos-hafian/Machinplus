@@ -1,0 +1,305 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>مجله صنعت | مقالات ماشین‌آلات و تجهیزات — ماشین پلاس</title>
+    <meta name="description"
+          content="مقالات تخصصی درباره خرید ماشین‌آلات صنعتی، نگهداری و تعمیرات، تحلیل بازار و فناوری‌های نوین تولید به زبان فارسی."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {sans: ['Vazirmatn', 'system-ui', 'sans-serif']},
+                    colors: {
+                        background: 'oklch(0.975 0.005 240)',
+                        foreground: 'oklch(0.22 0.025 250)',
+                        surface: '#ffffff',
+                        'surface-muted': 'oklch(0.965 0.008 240)',
+                        border: 'oklch(0.90 0.012 245)',
+                        muted: 'oklch(0.955 0.008 240)',
+                        'muted-foreground': 'oklch(0.48 0.015 250)',
+                        primary: 'oklch(0.38 0.08 250)',
+                        'primary-foreground': '#fff',
+                        'primary-dark': 'oklch(0.28 0.07 252)',
+                        accent: 'oklch(0.68 0.15 60)',
+                        'accent-foreground': 'oklch(0.18 0.02 250)',
+                    },
+                    boxShadow: {
+                        soft: '0 1px 2px rgba(20,35,60,.04), 0 4px 16px rgba(20,35,60,.06)',
+                        elevated: '0 4px 12px rgba(20,35,60,.08), 0 16px 40px rgba(20,35,60,.10)',
+                        glow: '0 8px 32px rgba(31,78,121,.25)',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+            background: oklch(0.965 0.008 240);
+            color: oklch(0.22 0.025 250);
+            -webkit-font-smoothing: antialiased
+        }
+
+        h1, h2, h3, h4 {
+            letter-spacing: -0.01em
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-surface-muted">
+
+<header class="sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white font-extrabold">م+</span>
+            <span class="font-extrabold text-foreground">ماشین پلاس</span>
+        </a>
+        <nav aria-label="ناوبری اصلی" class="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-foreground">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="font-semibold text-foreground">مجله</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">درباره ما</a>
+            <a href="{% url 'core:contact-us' %}" class="text-foreground">تماس با ما</a>
+        </nav>
+        <a href="{% url 'core:inquiry' %}"
+           class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            مشاوره رایگان
+        </a>
+    </div>
+</header>
+
+<section class="border-b border-border bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div class="min-w-0">
+                <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                    <span class="h-1 w-1 rounded-full bg-accent"></span>
+                    مجله صنعت
+                </div>
+                <h1 class="text-2xl font-extrabold text-foreground sm:text-3xl">دانش کاربردی برای صنعتگران</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                    راهنمای خرید، نگهداری تجهیزات، تحلیل بازار و فناوری‌های نوین تولید — نوشته‌شده توسط کارشناسان ماشین
+                    پلاس.
+                </p>
+            </div>
+            <div class="w-full md:w-80">
+                <label for="blog-search" class="sr-only">جست‌وجو در مقالات</label>
+                <div class="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5 shadow-soft transition-colors focus-within:border-primary/40">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="M21 21l-4.3-4.3"/>
+                    </svg>
+                    <input id="blog-search" placeholder="جست‌وجو در مقالات..."
+                           class="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"/>
+                </div>
+            </div>
+        </div>
+        <nav aria-label="دسته‌بندی مقالات" id="cats" class="mt-6 flex flex-wrap gap-2"></nav>
+    </div>
+</section>
+
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+    <div id="empty" class="hidden rounded-3xl border border-dashed border-border bg-white p-12 text-center shadow-soft">
+        <h2 class="text-lg font-extrabold text-foreground">مقاله‌ای یافت نشد</h2>
+        <p class="mx-auto mt-2 max-w-sm text-sm leading-7 text-muted-foreground">عبارت جست‌وجو یا دسته‌بندی را تغییر
+            دهید، یا پرسش خود را مستقیم از دستیار هوشمند بپرسید.</p>
+        <button id="reset"
+                class="mt-5 rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
+            پاک کردن فیلترها
+        </button>
+    </div>
+
+    <div id="results">
+        <div id="featured"></div>
+        <div class="mb-4 mt-8 flex items-center justify-between">
+            <h2 id="list-title" class="text-sm font-bold text-foreground">تازه‌ترین مقالات</h2>
+            <span class="text-xs text-muted-foreground"><span id="count" class="font-bold text-foreground">۰</span> مقاله</span>
+        </div>
+        <div id="grid" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"></div>
+        <div id="more-wrap" class="mt-8 hidden justify-center">
+            <button id="more"
+                    class="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-6 py-3 text-sm font-bold text-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/40">
+                نمایش مقالات بیشتر
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-12">
+            <aside class="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-primary-dark p-6 shadow-elevated sm:p-8">
+                <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                    <div class="min-w-0">
+                        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
+                            <span class="h-1 w-1 rounded-full bg-accent"></span> دستیار هوشمند
+                        </div>
+                        <h2 class="text-lg font-extrabold text-white sm:text-xl">نمی‌دانید کدام گزینه مناسب کارگاه
+                            شماست؟</h2>
+                        <p class="mt-2 max-w-xl text-sm leading-7 text-white/80">نیاز خود را به زبان ساده برای دستیار
+                            هوشمند ماشین پلاس بنویسید تا گزینه‌های مناسب و تامین‌کنندگان معتبر را پیدا کند.</p>
+                    </div>
+                    <a href="chat.html"
+                       class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98]">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                             stroke-linecap="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                        شروع گفت‌وگو
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<footer class="mt-10 border-t border-border bg-white py-8">
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۵ ماشین پلاس —
+        مجله صنعت
+    </div>
+</footer>
+
+<a href="chat.html" aria-label="گفت‌وگو با دستیار هوشمند"
+   class="fixed bottom-5 left-5 z-40 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-bold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:bg-primary-dark active:scale-95">
+    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+    <span class="hidden sm:inline">پرسش از دستیار</span>
+</a>
+
+{{ articles_json|json_script:"articles-data" }}
+
+<script>
+    const BLOG_CATEGORIES = [{"id": "all", "label": "همه مقالات"}, {
+        "id": "cnc",
+        "label": "ماشین‌کاری و CNC"
+    }, {"id": "maintenance", "label": "نگهداری و تعمیرات"}, {"id": "buying", "label": "راهنمای خرید"}, {
+        "id": "market",
+        "label": "بازار و اقتصاد صنعت"
+    }, {"id": "tech", "label": "فناوری و هوش مصنوعی"}];
+    const BLOG_POSTS = JSON.parse(document.getElementById("articles-data").textContent);
+    const faNum = (n) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
+    const catLabel = (id) => (BLOG_CATEGORIES.find(c => c.id === id) || {}).label || id;
+
+    const PAGE_SIZE = 6;
+    let query = "", category = "all", visible = PAGE_SIZE;
+
+    const meta = (p, cls) => `<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground ${cls}">
+  <time datetime="${p.date}" class="font-semibold text-foreground">${p.dateFa}</time>
+  <span aria-hidden="true">•</span><span>${faNum(p.readingMinutes)} دقیقه مطالعه</span>
+  <span aria-hidden="true">•</span><span>${p.author}</span></div>`;
+
+    const card = (p) => `<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated">
+  <a href="blog-detail.html?slug=${p.slug}" class="relative block overflow-hidden">
+    <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+    <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">${catLabel(p.category)}</span>
+  </a>
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="blog-detail.html?slug=${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
+    <p class="mt-2 line-clamp-3 flex-1 text-sm leading-7 text-muted-foreground">${p.excerpt}</p>
+    ${meta(p, "mt-4 border-t border-border pt-4")}
+  </div></article>`;
+
+    const featuredCard = (p) => `<article class="group overflow-hidden rounded-3xl border border-border bg-white shadow-soft transition-all hover:shadow-elevated">
+  <div class="grid grid-cols-1 lg:grid-cols-2">
+    <a href="/blog/${p.id}/${p.slug}" class="block overflow-hidden">
+      <img src="${p.image}" alt="${p.title}" class="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105 lg:h-full lg:min-h-[320px]" />
+    </a>
+    <div class="flex flex-col justify-center p-6 sm:p-8">
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="rounded-full bg-accent/15 px-2.5 py-1 font-bold text-accent-foreground">مقاله ویژه</span>
+        <span class="rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">${catLabel(p.category)}</span>
+      </div>
+      <h3 class="mt-3 text-xl font-extrabold leading-9 text-foreground sm:text-2xl"><a href="/blog/${p.id}/${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
+      <p class="mt-3 text-sm leading-8 text-muted-foreground">${p.excerpt}</p>
+      ${meta(p, "mt-5")}
+      <a href="/blog/${p.id}/${p.slug}" class="mt-6 inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-soft transition-all hover:bg-primary-dark active:scale-[0.98]">
+        خواندن مقاله
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </a>
+    </div>
+  </div></article>`;
+
+    function renderCats() {
+        document.getElementById("cats").innerHTML = BLOG_CATEGORIES.map(c => {
+            const on = c.id === category;
+            return `<button data-cat="${c.id}" aria-pressed="${on}" class="rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${on ? "border-primary bg-primary text-white shadow-soft" : "border-border bg-white text-muted-foreground hover:-translate-y-0.5 hover:border-primary/40 hover:text-foreground"}">${c.label}</button>`;
+        }).join("");
+    }
+
+    function render() {
+        renderCats();
+        const q = query.trim().toLowerCase();
+        const filtered = BLOG_POSTS.filter(p => {
+            const okCat = category === "all" || p.category === category;
+            const okQ = !q || p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q) || p.tags.some(t => t.toLowerCase().includes(q));
+            return okCat && okQ;
+        });
+
+        document.getElementById("empty").classList.toggle("hidden", filtered.length !== 0);
+        document.getElementById("results").classList.toggle("hidden", filtered.length === 0);
+        if (!filtered.length) return;
+
+        const showFeatured = category === "all" && !q;
+        document.getElementById("featured").innerHTML = showFeatured ? featuredCard(filtered[0]) : "";
+        document.getElementById("list-title").textContent = category === "all" ? "تازه‌ترین مقالات" : catLabel(category);
+        document.getElementById("count").textContent = faNum(filtered.length);
+        document.getElementById("grid").innerHTML = filtered.slice(0, visible).map(card).join("");
+        const moreWrap = document.getElementById("more-wrap");
+        moreWrap.classList.toggle("hidden", visible >= filtered.length);
+        moreWrap.classList.toggle("flex", visible < filtered.length);
+    }
+
+    document.getElementById("blog-search").addEventListener("input", e => {
+        query = e.target.value;
+        visible = PAGE_SIZE;
+        render();
+    });
+    document.getElementById("cats").addEventListener("click", e => {
+        const b = e.target.closest("button[data-cat]");
+        if (!b) return;
+        category = b.dataset.cat;
+        visible = PAGE_SIZE;
+        render();
+    });
+    document.getElementById("more").addEventListener("click", () => {
+        visible += PAGE_SIZE;
+        render();
+    });
+    document.getElementById("reset").addEventListener("click", () => {
+        query = "";
+        category = "all";
+        visible = PAGE_SIZE;
+        document.getElementById("blog-search").value = "";
+        render();
+    });
+    render();
+</script>
+</body>
+</html>

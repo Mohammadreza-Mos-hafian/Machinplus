@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{% block title %}
+    DubaiBy | حساب کاربری
+{% endblock %}
+
+{% block main %}
+    <div class="container my-5 pt-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title fw-bold">ایجاد حساب کاربری</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.username|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.first_name|as_crispy_field }}
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    {{ form.password1|as_crispy_field }}
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    {{ form.password2|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-warning">ثبت نام</button>
+                            </div>
+                            <div class="mb-3">
+                                <a href="{% url 'account:login' %}" class="text-primary">حساب کاربری دارید؟ وارد شوید</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

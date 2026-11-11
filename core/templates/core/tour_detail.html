@@ -1,0 +1,205 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+    DubaiBy | AI Travel Agent
+{% endblock %}
+
+{% block main %}
+
+    <a href="{% url 'core:chatbot' %}?message=همه+چیز+درباره+تور+{{ object.title }}" class="fixed-btn">با دستیار هوشمند مشورت کن</a>
+
+    <!-- ***** Main Banner Area Start ***** -->
+    <div style="background-image: url({{ tour.image_cover.url }});" class="about-main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="content">
+                        <div style="background: url({{ tour.image_cover.url }}) no-repeat center center fixed;"
+                             class="blur-bg"></div>
+                        <h4>پیشنهاد هوش مصنوعی</h4>
+                        <div class="line-dec"></div>
+                        <h2>تور {{ tour.title }}</h2>
+                        <p id="type-ai"></p>
+                        <div class="main-button">
+                            <a href="#images">تجربه یک تور هیجان انگیز</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Main Banner Area End ***** -->
+
+    <div class="cities-town">
+        <div class="container">
+            <div class="row">
+                <div class="slider-content">
+                    <div class="row">
+                        {#                        <div class="col-lg-12">#}
+                        {#                            <h2>Caribbean’s <em>Cities &amp; Towns</em></h2>#}
+                        {#                        </div>#}
+                        <div class="col-lg-12">
+                            <div dir="ltr" class="owl-cites-town owl-carousel" id="images">
+                                {% for img in tour.tour_images.all %}
+                                    <div class="item">
+                                        <div class="thumb">
+                                            <img src="{{ img.image.url }}" alt="">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="more-about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="section-heading">
+                        <h2>جزئیات {{ tour.title }}</h2>
+                        <p>{{ tour.summary }}</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="info-item">
+                                <h4>{{ tour.start_time.date }}</h4>
+                                <span>از تاریخ</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="info-item">
+                                <h4>{{ tour.end_time.date }}</h4>
+                                <span>تا تاریخ</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="info-item">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h4>{{ tour.accommodation }}</h4>
+                                        <span>اقامت</span>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h4>{{ tour.meals }}</h4>
+                                        <span>وعده های غذایی</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-button">
+                        <a href="#daily">مشاهده برنامه سفر و رزرو</a>
+                    </div>
+                </div>
+{#                <div class="col-lg-6 align-self-center">#}
+{#                    <div class="left-image">#}
+{#                        <img src="{% static 'site/assets/images/about-left-image.jpg' %}" alt="">#}
+{#                    </div>#}
+{#                </div>#}
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container-plan" id="daily">
+        <div class="wrapper-plan">
+            <h1>برنامه سفر</h1>
+            <ul class="sessions">
+                {% for day in tour.tour_days.all %}
+                    <li>
+                        <div class="time">
+                            <i class="fa fa-calendar"></i>
+                            {{ day.day }}
+                        </div>
+                        <p>{{ day.summary }}</p>
+                    </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="best-locations" id="affiliates">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 my-5">
+                    <div class="text-center">
+                        <h4>رزرو</h4>
+                    </div>
+                </div>
+                <div class="col-12">
+                    {% for provider in tour.tour_provider.all %}
+                        <div class="more-info">
+                            <div class="row">
+                                <div class="col-lg-3 col-sm-6 col-6">
+                                    <i class="fa fa-user"></i>
+                                    <h4><span>فروشنده:</span><br>{{ provider.provider }}</h4>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-6">
+                                    <i class="fa fa-star"></i>
+                                    <h4><span>امتیاز:</span><br>{{ provider.rating }} ستاره</h4>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-6">
+                                    <i class="fa fa-money-bill-wave"></i>
+                                    <h4><span> قیمت:</span><br>{{ provider.price|intcomma:False }}ت</h4>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-6">
+                                    <div class="main-button">
+                                        <a href="{{ provider.affiliate_link }}" target="_blank">رزرو</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="more-description my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 bg-light rounded p-4">
+                    <p>
+                        {{ tour.description|safe }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_code %}
+    <script>
+        $(".option").click(function () {
+            $(".option").removeClass("active");
+            $(this).addClass("active");
+        });
+    </script>
+
+    <script>
+        var i = 0;
+        var txt = '{{ tour.ai_summary }}'
+        var speed = 50;
+
+        function typeWriter() {
+            if (i < txt.length) {
+                document.getElementById("type-ai").innerHTML += txt.charAt(i);
+                i++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        typeWriter();
+    </script>
+{% endblock %}
