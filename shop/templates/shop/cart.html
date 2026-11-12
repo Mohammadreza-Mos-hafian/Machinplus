@@ -1,0 +1,928 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>سبد خرید | ماشین پلاس</title>
+    <meta name="description" content="سبد خرید شما در ماشین پلاس."/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"/>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {sans: ['Vazirmatn', 'system-ui', 'sans-serif']},
+                    colors: {
+                        background: 'oklch(0.975 0.005 240)',
+                        foreground: 'oklch(0.22 0.025 250)',
+                        surface: '#ffffff',
+                        'surface-muted': 'oklch(0.965 0.008 240)',
+                        border: 'oklch(0.90 0.012 245)',
+                        muted: 'oklch(0.955 0.008 240)',
+                        'muted-foreground': 'oklch(0.48 0.015 250)',
+                        primary: 'oklch(0.38 0.08 250)',
+                        'primary-foreground': '#fff',
+                        'primary-dark': 'oklch(0.28 0.07 252)',
+                        accent: 'oklch(0.68 0.15 60)',
+                    },
+                    boxShadow: {
+                        soft: '0 1px 2px rgba(20,35,60,.04), 0 4px 16px rgba(20,35,60,.06)',
+                        elevated: '0 4px 12px rgba(20,35,60,.08), 0 16px 40px rgba(20,35,60,.10)',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body {
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+            background: oklch(0.965 0.008 240);
+            color: oklch(0.22 0.025 250);
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .cart-item {
+            transition: background-color .2s ease, opacity .2s ease;
+        }
+
+        .quantity-btn {
+            transition: background-color .2s ease, color .2s ease;
+        }
+
+        .quantity-btn:hover {
+            background: oklch(0.90 0.012 245);
+        }
+
+        .product-image {
+            background: oklch(0.965 0.008 240);
+        }
+
+        .empty-cart-icon {
+            background: oklch(0.945 0.015 240);
+        }
+
+        /* Shopping Cart Header Icon */
+        .cart-header-icon,
+        .cart-header-icon:link,
+        .cart-header-icon:visited,
+        .cart-header-icon:hover,
+        .cart-header-icon:focus,
+        .cart-header-icon:focus-visible,
+        .cart-header-icon:active {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            color: oklch(0.38 0.08 250) !important;
+            background: transparent !important;
+
+            text-decoration: none !important;
+            border: none !important;
+            outline: none !important;
+
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+
+            transition: none !important;
+            animation: none !important;
+
+            cursor: pointer;
+        }
+
+        .cart-header-icon {
+            margin-top: 0.35rem;
+        }
+
+        .cart-header-icon svg,
+        .cart-header-icon:hover svg,
+        .cart-header-icon:focus svg,
+        .cart-header-icon:active svg {
+            width: 32px !important;
+            height: 32px !important;
+
+            color: oklch(0.38 0.08 250) !important;
+
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .cart-header-icon svg path,
+        .cart-header-icon svg circle {
+            transition: none !important;
+        }
+
+        .cart-header-icon .cart-count {
+            transition: none !important;
+            transform: none !important;
+            filter: none !important;
+            padding-top: 3px;
+        }
+
+        nav + div {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-item .delete-cart-item,
+        .cart-item .remove-btn,
+        .cart-item .delete-cart-item:hover,
+        .cart-item .remove-btn:hover,
+        .cart-item .delete-cart-item:focus,
+        .cart-item .remove-btn:focus,
+        .cart-item .delete-cart-item:active,
+        .cart-item .remove-btn:active {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            flex: 0 0 2.25rem !important;
+            flex-shrink: 0 !important;
+            align-self: flex-start !important;
+
+            width: 2.25rem !important;
+            min-width: 2.25rem !important;
+            max-width: 2.25rem !important;
+            height: 2.25rem !important;
+
+            padding: 0.5rem !important;
+
+            color: #dc2626 !important;
+            background: #fee2e2 !important;
+
+            border: none !important;
+            border-radius: 0.5rem !important;
+
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+
+            transition: none !important;
+            animation: none !important;
+
+            cursor: pointer;
+        }
+
+        .cart-item .delete-cart-item svg,
+        .cart-item .remove-btn svg {
+            display: block;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .empty-cart-icon svg {
+            margin-right: 0.3rem;
+        }
+
+        .cart-header-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        @media (max-width: 640px) {
+            .cart-item {
+                align-items: flex-start;
+            }
+
+            .cart-header-icon svg {
+                width: 30px !important;
+                height: 30px !important;
+            }
+
+            nav + div {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+<header class="sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+        <a href="{% url 'core:home' %}" class="flex items-center gap-2">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white font-extrabold">م+</span>
+            <span class="font-extrabold text-foreground">ماشین پلاس</span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="font-semibold transition-colors hover:text-foreground">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">مجله</a>
+            <a href="{% url 'blog:list' %}" class="text-foreground">درباره ما</a>
+            <a href="{% url 'core:contact-us' %}" class="text-foreground">تماس با ما</a>
+        </nav>
+        <div>
+
+            <a href="{% url 'core:inquiry' %}"
+               class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                مشاوره رایگان
+            </a>
+            <a href="{% url 'shop:cart_list' %}"
+               aria-label="سبد خرید"
+               class="cart-header-icon relative inline-flex items-center justify-center no-underline"
+            >
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 32 32"
+                        fill="none"
+                        aria-hidden="true"
+                >
+                    <path
+                            d="M2.5 4H5L8.2 7.5"
+                            stroke="#D69B35"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    />
+
+                    <path
+                            d="M8.2 7.5H29L26.2 19.5H11L8.2 7.5Z"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    />
+
+                    <path
+                            d="M14 10.5L15 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <path
+                            d="M20 10.5L20 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <path
+                            d="M25 10.5L24 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <circle cx="13" cy="25" r="1.8" fill="#D69B35"/>
+                    <circle cx="24" cy="25" r="1.8" fill="#D69B35"/>
+                </svg>
+
+                <span
+                        class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
+                >
+                    {{ cart_items_count|default:0 }}
+                </span>
+            </a>
+
+        </div>
+    </div>
+</header>
+
+
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+    <!-- Page Header -->
+    <section class="h-[84px] mb-7 flex flex-col justify-between">
+
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-xs text-muted-foreground">
+            <a href="{% url 'core:home' %}" class="transition hover:text-primary">خانه</a>
+            <span>/</span>
+            <a href="{% url 'shop:product_list' %}" class="transition hover:text-primary">فروشگاه</a>
+            <span>/</span>
+            <span class="font-semibold text-foreground">سبد خرید</span>
+        </div>
+
+        <!-- Checkout Steps -->
+        <div class="flex items-center mx-auto w-full gap-2 max-w-xl">
+
+            <div class="flex items-center gap-2 text-primary shrink-0">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">
+                ۱
+            </span>
+                <span class="text-xs sm:text-sm font-bold">سبد خرید</span>
+            </div>
+
+            <div class="h-px flex-1 bg-border"></div>
+
+            <div class="flex items-center gap-2 text-muted-foreground shrink-0">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold">
+                ۲
+            </span>
+                <span class="text-xs sm:text-sm">اطلاعات سفارش</span>
+            </div>
+
+            <div class="h-px flex-1 bg-border"></div>
+
+            <div class="flex items-center gap-2 text-muted-foreground shrink-0">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold">
+                ۳
+            </span>
+                <span class="text-xs sm:text-sm">پرداخت</span>
+            </div>
+
+        </div>
+    </section>
+    <div id="cart-content">
+
+        <!-- Cart Content -->
+        <div id="cart-items-wrapper" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+
+            <!-- Cart Items -->
+            <section class="lg:col-span-8">
+
+                <div class="bg-surface rounded-2xl border border-border shadow-soft overflow-hidden">
+
+                    <!-- Cart Header -->
+                    <div class="flex items-center justify-between px-5 sm:px-6 py-5 border-b border-border">
+
+                        <div class="flex items-center gap-3">
+                            <h2 class="font-bold text-lg text-foreground">
+                                اقلام سبد خرید
+                            </h2>
+
+                            <span id="items-badge"
+                                  class="bg-muted text-muted-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                            ۳ محصول
+                        </span>
+                        </div>
+
+                        <button id="clear-cart"
+                                type="button"
+                                class="text-xs sm:text-sm text-muted-foreground hover:text-red-600 transition">
+                            حذف همه
+                        </button>
+
+                    </div>
+
+
+                    <!-- Items List -->
+                    <div id="cart-items" class="divide-y divide-border">
+
+                        <!-- Product 1 -->
+                        <article class="cart-item flex flex-col sm:flex-row gap-4 p-5 sm:p-6"
+                                 data-id="1"
+                                 data-price="850000">
+
+                            <div class="product-image w-full sm:w-28 h-36 sm:h-28 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                <img src="{% static 'site/medias/product-1.jpg' %}"
+                                     alt="دستگاه صنعتی"
+                                     class="w-full h-full object-contain p-3"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+
+                                <div class="hidden w-full h-full items-center justify-center text-muted-foreground">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="w-full flex-1 min-w-0 flex flex-col justify-between gap-4">
+
+                                <div>
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                        <span class="text-xs text-muted-foreground">
+                                            ماشین‌آلات صنعتی
+                                        </span>
+
+                                            <h3 class="font-bold text-foreground mt-1 leading-7">
+                                                دستگاه برش صنعتی مدل X200
+                                            </h3>
+                                        </div>
+
+                                        <button
+                                                type="button"
+                                                class="delete-cart-item remove-btn"
+                                                aria-label="حذف محصول"
+                                        >
+                                            <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-5 h-5"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.8"
+                                            >
+                                                <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M6 7h12M10 11v6m4-6v6M9 7l1-2h4l1 2m-8 0 1 14h8l1-14"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <p class="text-xs text-muted-foreground mt-2">
+                                        کد محصول: MP-1001
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-row items-center justify-between gap-4 w-full">
+
+                                    <div>
+                                        <p class="text-xs text-muted-foreground mb-2">
+                                            تعداد
+                                        </p>
+
+                                        <div class="flex items-center border border-border rounded-lg w-fit overflow-hidden">
+
+                                            <button type="button"
+                                                    class="quantity-btn plus w-9 h-9 flex items-center justify-center text-foreground">
+                                                +
+                                            </button>
+
+                                            <span class="quantity-value w-10 text-center text-sm font-bold"
+                                                  aria-live="polite">۱</span>
+
+                                            <button type="button"
+                                                    class="quantity-btn minus w-9 h-9 flex items-center justify-center text-foreground">
+                                                −
+                                            </button>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <p class="text-xs text-muted-foreground mb-1">
+                                            قیمت واحد
+                                        </p>
+
+                                        <p class="font-extrabold text-primary">
+                                            <span class="unit-price">۸۵۰,۰۰۰</span>
+                                            <span class="text-xs font-normal text-muted-foreground">تومان</span>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </article>
+
+
+                        <!-- Product 2 -->
+                        <article class="cart-item flex flex-col sm:flex-row gap-4 p-5 sm:p-6"
+                                 data-id="2"
+                                 data-price="1250000">
+
+                            <div class="product-image w-full sm:w-28 h-36 sm:h-28 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                <img src="{% static 'site/medias/product-2.jpg' %}"
+                                     alt="قطعه صنعتی"
+                                     class="w-full h-full object-contain p-3"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+
+                                <div class="hidden w-full h-full items-center justify-center text-muted-foreground">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="w-full flex-1 min-w-0 flex flex-col justify-between gap-4">
+
+                                <div>
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                        <span class="text-xs text-muted-foreground">
+                                            قطعات یدکی
+                                        </span>
+
+                                            <h3 class="font-bold text-foreground mt-1 leading-7">
+                                                موتور الکتریکی سه فاز
+                                            </h3>
+                                        </div>
+
+                                        <button type="button"
+                                                class="remove-btn flex-shrink-0 p-2 rounded-lg text-muted-foreground transition"
+                                                aria-label="حذف محصول">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      stroke-width="1.7"
+                                                      d="M6 7h12m-10 0V5h8v2m-9 0l1 13h8l1-13M10 11v5m4-5v5"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <p class="text-xs text-muted-foreground mt-2">
+                                        کد محصول: MP-1002
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-row items-center justify-between gap-4 w-full">
+
+                                    <div>
+                                        <p class="text-xs text-muted-foreground mb-2">
+                                            تعداد
+                                        </p>
+
+                                        <div class="flex items-center border border-border rounded-lg w-fit overflow-hidden">
+                                            <button type="button"
+                                                    class="quantity-btn plus w-9 h-9 flex items-center justify-center text-foreground">
+                                                +
+                                            </button>
+
+                                            <span class="quantity-value w-10 text-center text-sm font-bold"
+                                                  aria-live="polite">۲</span>
+
+                                            <button type="button"
+                                                    class="quantity-btn minus w-9 h-9 flex items-center justify-center text-foreground">
+                                                −
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <p class="text-xs text-muted-foreground mb-1">
+                                            قیمت واحد
+                                        </p>
+
+                                        <p class="font-extrabold text-primary">
+                                            <span class="unit-price">۱,۲۵۰,۰۰۰</span>
+                                            <span class="text-xs font-normal text-muted-foreground">تومان</span>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </article>
+
+
+                        <!-- Product 3 -->
+                        <article class="cart-item flex flex-col sm:flex-row gap-4 p-5 sm:p-6"
+                                 data-id="3"
+                                 data-price="980000">
+
+                            <div class="product-image w-full sm:w-28 h-36 sm:h-28 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                <img src="{% static 'site/medias/product-3.jpg' %}"
+                                     alt="تجهیزات صنعتی"
+                                     class="w-full h-full object-contain p-3"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+
+                                <div class="hidden w-full h-full items-center justify-center text-muted-foreground">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="w-full flex-1 min-w-0 flex flex-col justify-between gap-4">
+
+                                <div>
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                        <span class="text-xs text-muted-foreground">
+                                            تجهیزات تولید
+                                        </span>
+
+                                            <h3 class="font-bold text-foreground mt-1 leading-7">
+                                                پمپ صنعتی فشار قوی
+                                            </h3>
+                                        </div>
+
+                                        <button type="button"
+                                                class="remove-btn flex-shrink-0 p-2 rounded-lg text-muted-foreground transition"
+                                                aria-label="حذف محصول">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      stroke-width="1.7"
+                                                      d="M6 7h12m-10 0V5h8v2m-9 0l1 13h8l1-13M10 11v5m4-5v5"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <p class="text-xs text-muted-foreground mt-2">
+                                        کد محصول: MP-1003
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-row items-center justify-between gap-4 w-full">
+
+                                    <div>
+                                        <p class="text-xs text-muted-foreground mb-2">
+                                            تعداد
+                                        </p>
+
+                                        <div class="flex items-center border border-border rounded-lg w-fit overflow-hidden">
+                                            <button type="button"
+                                                    class="quantity-btn plus w-9 h-9 flex items-center justify-center text-foreground">
+                                                +
+                                            </button>
+
+                                            <span class="quantity-value w-10 text-center text-sm font-bold"
+                                                  aria-live="polite">۱</span>
+
+                                            <button type="button"
+                                                    class="quantity-btn minus w-9 h-9 flex items-center justify-center text-foreground">
+                                                −
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <p class="text-xs text-muted-foreground mb-1">
+                                            قیمت واحد
+                                        </p>
+
+                                        <p class="font-extrabold text-primary">
+                                            <span class="unit-price">۹۸۰,۰۰۰</span>
+                                            <span class="text-xs font-normal text-muted-foreground">تومان</span>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </article>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Order Summary -->
+            <aside class="lg:col-span-4">
+
+                <div class="bg-surface rounded-2xl border border-border shadow-soft p-5 sm:p-6 lg:sticky lg:top-6">
+
+                    <h2 class="text-lg font-bold text-foreground mb-6">
+                        خلاصه سفارش
+                    </h2>
+
+                    <div class="space-y-5">
+
+                        <div class="flex items-center justify-between text-sm">
+                        <span class="text-muted-foreground">
+                            تعداد اقلام
+                        </span>
+
+                            <span id="summary-count" class="font-semibold text-foreground">
+                            ۴ عدد
+                        </span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                        <span class="text-muted-foreground">
+                            جمع محصولات
+                        </span>
+
+                            <span class="font-semibold text-foreground">
+                            <span id="subtotal">۴,۳۳۰,۰۰۰</span>
+                            تومان
+                        </span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                        <span class="text-muted-foreground">
+                            هزینه ارسال
+                        </span>
+
+                            <span class="text-xs text-muted-foreground">
+                            پس از ثبت آدرس
+                        </span>
+                        </div>
+
+                    </div>
+
+                    <div class="border-t border-border my-6"></div>
+
+                    <div class="flex items-center justify-between gap-3 mb-6">
+                    <span class="font-bold text-foreground">
+                        مبلغ کل
+                    </span>
+
+                        <div class="text-left">
+                            <div class="text-xl font-extrabold text-primary">
+                                <span id="total">۴,۳۳۰,۰۰۰</span>
+                            </div>
+                            <span class="text-xs text-muted-foreground">تومان</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'shop:checkout' %}"
+                       id="continue-shopping"
+                       class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-primary-foreground font-bold py-3.5 px-5 rounded-xl transition shadow-soft">
+
+                        ادامه خرید
+
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="1.8" d="M15 19l-7-7 7-7"/>
+                        </svg>
+
+                    </a>
+
+                    <p class="text-xs text-muted-foreground text-center mt-4 leading-6">
+                        با ادامه خرید، وارد مرحله بعدی ثبت سفارش خواهید شد.
+                    </p>
+
+                    <div class="border-t border-border mt-6 pt-5 space-y-3">
+
+                        <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="1.8"
+                                      d="M9 12l2 2 4-4m5-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            خرید مستقیم از تأمین‌کنندگان
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="1.8"
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            ثبت سفارش امن
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+        </div>
+
+
+        <!-- Empty Cart -->
+        <div id="empty-cart"
+             class="hidden min-h-[420px] bg-white rounded-2xl border border-border shadow-soft flex-col items-center justify-center py-16 px-5 text-center">
+
+            <div class="empty-cart-icon w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg class="w-9 h-9 text-muted-foreground" fill="none"
+                     stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="1.5"
+                          d="M3 3h2l2.2 11.2a2 2 0 002 1.6h8.6a2 2 0 002-1.6L22 7H6"/>
+                    <circle cx="10" cy="20" r="1"/>
+                    <circle cx="18" cy="20" r="1"/>
+                </svg>
+            </div>
+
+            <h3 class="text-lg font-bold text-foreground">
+                سبد خرید شما خالی است
+            </h3>
+
+            <p class="text-sm text-muted-foreground mt-2 mb-6">
+                هنوز محصولی به سبد خرید خود اضافه نکرده‌اید.
+            </p>
+
+            <a href="{% url 'shop:product_list' %}"
+               class="inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl text-sm font-semibold transition">
+                مشاهده محصولات
+            </a>
+
+        </div>
+    </div>
+</main>
+
+<footer class="mt-10 border-t border-border bg-white py-8">
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">
+        © ۲۰۲۶ ماشین پلاس — تمامی حقوق محفوظ است.
+    </div>
+</footer>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const cartItemsWrapper = document.getElementById('cart-items-wrapper');
+        const cartItems = document.getElementById('cart-items');
+        const emptyCart = document.getElementById('empty-cart');
+
+        const subtotalElement = document.getElementById('subtotal');
+        const totalElement = document.getElementById('total');
+
+        const itemsBadge = document.getElementById('items-badge');
+        const summaryCount = document.getElementById('summary-count');
+
+        const clearCartButton = document.getElementById('clear-cart');
+
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('fa-IR').format(price);
+        };
+
+        function updateCart() {
+            const items = cartItems.querySelectorAll('.cart-item');
+
+            let subtotal = 0;
+            let totalQuantity = 0;
+
+            items.forEach(item => {
+                const price = Number(item.dataset.price);
+                const quantity = Number(
+                    item.querySelector('.quantity-value').textContent.replace(/[۰-۹]/g, digit =>
+                        '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)
+                    )
+                );
+
+                subtotal += price * quantity;
+                totalQuantity += quantity;
+            });
+
+            subtotalElement.textContent = formatPrice(subtotal);
+            totalElement.textContent = formatPrice(subtotal);
+
+            itemsBadge.textContent = formatPrice(items.length) + ' محصول';
+            summaryCount.textContent = formatPrice(totalQuantity) + ' عدد';
+
+            if (items.length === 0) {
+                cartItemsWrapper.classList.add('hidden');
+
+                emptyCart.classList.remove('hidden');
+                emptyCart.classList.add('flex');
+            } else {
+                cartItemsWrapper.classList.remove('hidden');
+
+                emptyCart.classList.add('hidden');
+                emptyCart.classList.remove('flex');
+            }
+        }
+
+        function getQuantity(element) {
+            const value = element.querySelector('.quantity-value').textContent;
+            return Number(value.replace(/[۰-۹]/g, digit =>
+                '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)
+            ));
+        }
+
+        function updateQuantity(element, quantity) {
+            element.querySelector('.quantity-value').textContent = formatPrice(quantity);
+        }
+
+        cartItems.addEventListener('click', function (event) {
+            const item = event.target.closest('.cart-item');
+
+            if (!item) return;
+
+            if (event.target.closest('.plus')) {
+                const quantity = getQuantity(item);
+                updateQuantity(item, quantity + 1);
+                updateCart();
+            }
+
+            if (event.target.closest('.minus')) {
+                const quantity = getQuantity(item);
+
+                if (quantity > 1) {
+                    updateQuantity(item, quantity - 1);
+                    updateCart();
+                }
+            }
+
+            if (event.target.closest('.remove-btn')) {
+                item.remove();
+                updateCart();
+            }
+        });
+
+        clearCartButton.addEventListener('click', function () {
+            cartItems.innerHTML = '';
+            updateCart();
+        });
+
+        document.getElementById('continue-shopping').addEventListener('click', function () {
+            window.location.href = '#products';
+        });
+
+        updateCart();
+    });
+</script>
+
+</body>
+</html>

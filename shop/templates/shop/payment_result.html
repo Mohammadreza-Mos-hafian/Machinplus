@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>نتیجه پرداخت | ماشین پلاس</title>
+    <meta name="description" content="نتیجه پرداخت سفارش شما در ماشین پلاس."/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"/>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1a2744',
+                        accent: '#f59e0b',
+                        border: '#e5e7eb',
+                        muted: '#f3f4f6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: #f8fafc;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .result-card {
+            animation: appear .45s ease-out;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col text-gray-800">
+
+<!-- Main -->
+<main class="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
+
+    <div class="w-full max-w-2xl">
+
+        {% if payment_success|default:True %}
+
+            <!-- Successful Payment -->
+            <div class="result-card bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
+
+                <div class="px-6 sm:px-10 pt-10 pb-8 text-center">
+
+                    <!-- Success Icon -->
+                    <div class="w-20 h-20 mx-auto rounded-full bg-green-50 flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-green-600"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2.5"
+                                  d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold mb-4">
+                        پرداخت موفق
+                    </span>
+
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-primary mb-3">
+                        سفارش شما با موفقیت ثبت شد!
+                    </h1>
+
+                    <p class="text-sm text-gray-500 leading-7 max-w-md mx-auto">
+                        پرداخت شما با موفقیت انجام شد. سفارش شما ثبت شده و
+                        مراحل پردازش آن آغاز خواهد شد.
+                    </p>
+
+                </div>
+
+                <!-- Order Information -->
+                <div class="mx-5 sm:mx-8 mb-8 rounded-xl border border-border overflow-hidden">
+
+                    <div class="bg-gray-50 px-5 py-4 border-b border-border">
+                        <h2 class="font-bold text-sm text-primary">
+                            اطلاعات سفارش
+                        </h2>
+                    </div>
+
+                    <div class="p-5 space-y-5">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                شماره سفارش
+                            </span>
+                            <span class="text-sm font-extrabold text-primary" dir="ltr">
+                                {{ order_number }}
+                            </span>
+                        </div>
+
+                        <div class="h-px bg-border"></div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                مبلغ پرداختی
+                            </span>
+                            <span class="text-sm font-bold text-primary">
+                                {{ paid_amount }} تومان
+                            </span>
+                        </div>
+
+                        <div class="h-px bg-border"></div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                کد پیگیری پرداخت
+                            </span>
+                            <span class="text-sm font-semibold text-gray-700" dir="ltr">
+                                {{ tracking_code|default:"-" }}
+                            </span>
+                        </div>
+
+                        <div class="h-px bg-border"></div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                تاریخ ثبت سفارش
+                            </span>
+                            <span class="text-sm font-semibold text-gray-700">
+                                {{ order_date }}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div class="mx-5 sm:mx-8 mb-8 flex items-start gap-3 rounded-xl bg-green-50 border border-green-100 p-4">
+                    <svg class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+
+                    <p class="text-xs text-green-800 leading-6">
+                        اطلاعات سفارش شما ثبت شده است. برای پیگیری سفارش،
+                        شماره سفارش خود را نزد خود نگه دارید.
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="px-5 sm:px-8 pb-8 flex flex-col sm:flex-row gap-3">
+
+                    <a href="{% url 'core:home' %}"
+                       class="flex-1 flex items-center justify-center gap-2 bg-primary text-white rounded-xl py-3.5 px-5 text-sm font-bold transition hover:bg-primary/90">
+                        بازگشت به صفحه اصلی
+                    </a>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="flex-1 flex items-center justify-center border border-border text-gray-700 rounded-xl py-3.5 px-5 text-sm font-bold transition hover:bg-gray-50">
+                        ادامه خرید
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <!-- Failed Payment -->
+            <div class="result-card bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
+
+                <div class="px-6 sm:px-10 pt-10 pb-8 text-center">
+
+                    <!-- Error Icon -->
+                    <div class="w-20 h-20 mx-auto rounded-full bg-red-50 flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-red-600"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2.5"
+                                  d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </div>
+
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-4">
+                        پرداخت ناموفق
+                    </span>
+
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-primary mb-3">
+                        پرداخت سفارش انجام نشد!
+                    </h1>
+
+                    <p class="text-sm text-gray-500 leading-7 max-w-md mx-auto">
+                        متأسفانه پرداخت شما با موفقیت انجام نشد.
+                        در صورت کسر وجه از حساب، مبلغ طبق قوانین بانکی
+                        به حساب شما بازگردانده خواهد شد.
+                    </p>
+
+                </div>
+
+                <!-- Order Information -->
+                <div class="mx-5 sm:mx-8 mb-8 rounded-xl border border-border overflow-hidden">
+
+                    <div class="bg-gray-50 px-5 py-4 border-b border-border">
+                        <h2 class="font-bold text-sm text-primary">
+                            اطلاعات سفارش
+                        </h2>
+                    </div>
+
+                    <div class="p-5 space-y-5">
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                شماره سفارش
+                            </span>
+                            <span class="text-sm font-extrabold text-primary" dir="ltr">
+                                {{ order_number }}
+                            </span>
+                        </div>
+
+                        <div class="h-px bg-border"></div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                مبلغ سفارش
+                            </span>
+                            <span class="text-sm font-bold text-primary">
+                                {{ paid_amount }} تومان
+                            </span>
+                        </div>
+
+                        <div class="h-px bg-border"></div>
+
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-sm text-gray-500">
+                                وضعیت پرداخت
+                            </span>
+                            <span class="text-sm font-bold text-red-600">
+                                ناموفق
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="mx-5 sm:mx-8 mb-8 flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-4">
+                    <svg class="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+
+                    <p class="text-xs text-red-800 leading-6">
+                        {{ failure_reason|default:"لطفاً مجدداً تلاش کنید. اگر مبلغی از حساب شما کسر شده است، وضعیت تراکنش را از طریق بانک پیگیری کنید." }}
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="px-5 sm:px-8 pb-8 flex flex-col sm:flex-row gap-3">
+
+                    {% if retry_url %}
+                        <a href="{{ retry_url }}"
+                           class="flex-1 flex items-center justify-center gap-2 bg-primary text-white rounded-xl py-3.5 px-5 text-sm font-bold transition hover:bg-primary/90">
+                            تلاش مجدد برای پرداخت
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'core:home' %}"
+                       class="flex-1 flex items-center justify-center border border-border text-gray-700 rounded-xl py-3.5 px-5 text-sm font-bold transition hover:bg-gray-50">
+                        بازگشت به صفحه اصلی
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <p class="text-center text-xs text-gray-400 mt-6">
+            در صورت نیاز به راهنمایی، با پشتیبانی ماشین پلاس در ارتباط باشید.
+        </p>
+
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-border py-5">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-xs text-gray-400">
+            © ۲۰۲۶ ماشین پلاس — تمامی حقوق محفوظ است. </p>
+    </div>
+</footer>
+
+</body>
+</html>
