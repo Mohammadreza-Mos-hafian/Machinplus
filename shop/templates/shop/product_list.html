@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"/>
-        <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
 
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
@@ -60,6 +60,92 @@
         .no-scrollbar::-webkit-scrollbar {
             display: none
         }
+
+        /* Shopping Cart Header Icon */
+        .cart-header-icon,
+        .cart-header-icon:link,
+        .cart-header-icon:visited,
+        .cart-header-icon:hover,
+        .cart-header-icon:focus,
+        .cart-header-icon:focus-visible,
+        .cart-header-icon:active {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            color: oklch(0.38 0.08 250) !important;
+            background: transparent !important;
+
+            text-decoration: none !important;
+            border: none !important;
+            outline: none !important;
+
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+
+            transition: none !important;
+            animation: none !important;
+
+            cursor: pointer;
+        }
+
+        .cart-header-icon {
+            margin-top: 0.35rem;
+        }
+
+        .cart-header-icon svg,
+        .cart-header-icon:hover svg,
+        .cart-header-icon:focus svg,
+        .cart-header-icon:active svg {
+            width: 32px !important;
+            height: 32px !important;
+
+            color: oklch(0.38 0.08 250) !important;
+
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .cart-header-icon svg path,
+        .cart-header-icon svg circle {
+            transition: none !important;
+        }
+
+        .cart-header-icon .cart-count {
+            transition: none !important;
+            transform: none !important;
+            filter: none !important;
+            padding-top: 3px;
+        }
+
+        nav + div {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-header-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        @media (max-width: 640px) {
+            .cart-header-icon svg {
+                width: 30px !important;
+                height: 30px !important;
+            }
+
+            nav + div {
+                gap: 1rem;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -74,16 +160,77 @@
             <a href="{% url 'shop:product_list' %}" class="font-semibold transition-colors hover:text-foreground">فروشگاه</a>
             <a href="{% url 'blog:list' %}" class="text-foreground">مجله</a>
             <a href="{% url 'blog:list' %}" class="text-foreground">درباره ما</a>
-            <a href="{% url 'blog:list' %}" class="text-foreground">تماس با ما</a>
+            <a href="{% url 'core:contact-us' %}" class="text-foreground">تماس با ما</a>
         </nav>
-        <a href="{% url 'core:inquiry' %}"
-           class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                 stroke-linecap="round">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-            </svg>
-            مشاوره رایگان
-        </a>
+        <div>
+
+            <a href="{% url 'core:inquiry' %}"
+               class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                مشاوره رایگان
+            </a>
+            <a href="{% url 'shop:cart_list' %}"
+               aria-label="سبد خرید"
+               class="cart-header-icon relative inline-flex items-center justify-center no-underline"
+            >
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 32 32"
+                        fill="none"
+                        aria-hidden="true"
+                >
+                    <path
+                            d="M2.5 4H5L8.2 7.5"
+                            stroke="#D69B35"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    />
+
+                    <path
+                            d="M8.2 7.5H29L26.2 19.5H11L8.2 7.5Z"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    />
+
+                    <path
+                            d="M14 10.5L15 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <path
+                            d="M20 10.5L20 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <path
+                            d="M25 10.5L24 17"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                    />
+
+                    <circle cx="13" cy="25" r="1.8" fill="#D69B35"/>
+                    <circle cx="24" cy="25" r="1.8" fill="#D69B35"/>
+                </svg>
+
+                <span
+                        class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
+                >
+                    {{ cart_items_count|default:0 }}
+                </span>
+            </a>
+
+        </div>
     </div>
 </header>
 
