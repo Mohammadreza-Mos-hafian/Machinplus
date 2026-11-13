@@ -1,5 +1,6 @@
 from django.db import models
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
+
 from ckeditor_uploader.fields import RichTextUploadingField
 
 
@@ -8,6 +9,14 @@ class Product(models.Model):
     title = models.CharField(
         max_length=255,
         verbose_name="عنوان محصول"
+    )
+
+    sku = models.CharField(
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='کد اختصاصی'
     )
 
     main_image = models.ImageField(
@@ -35,6 +44,42 @@ class Product(models.Model):
         blank=True,
         related_name="products",
         verbose_name="فروشندگان محصول"
+    )
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name='قیمت',
+        validators=[
+            MinValueValidator(0)
+        ]
+    )
+
+    old_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name='قیمت قدیمی',
+        validators=[
+            MinValueValidator(0)
+        ]
+    )
+
+    stock = models.PositiveIntegerField(
+        default=0,
+        verbose_name='موجودی'
+    )
+
+    price_on_request = models.BooleanField(
+        default=False,
+        verbose_name='قیمت با استعلام'
+    )
+
+    is_available = models.BooleanField(
+        default=True,
+        verbose_name="قابل دسترس"
     )
 
     is_active = models.BooleanField(
