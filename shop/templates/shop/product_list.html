@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load humanize %}{% load number_filters %}
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -121,7 +121,8 @@
             transition: none !important;
             transform: none !important;
             filter: none !important;
-            padding-top: 3px;
+            padding-top: 2px;
+            font-size: 1rem;
         }
 
         nav + div {
@@ -226,7 +227,7 @@
                 <span
                         class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
                 >
-                    {{ cart_items_count|default:0 }}
+                    {{ cart_items_count|default:1|persian_numbers }}
                 </span>
             </a>
 
@@ -411,8 +412,14 @@
         });
     }
 
+    function formatPersianNumber(value) {
+        return new Intl.NumberFormat('en-US')
+            .format(value)
+            .replace(/\d/g, digit => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
+    }
+
     function card(p) {
-        return `
+        let article = `
   <article class="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated">
     <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
       <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -424,20 +431,51 @@
     <div class="flex flex-1 flex-col p-5">
       <h3 class="text-base font-bold leading-7 text-foreground">${p.title}</h3>
       <p class="mt-1.5 line-clamp-2 text-xs leading-6 text-muted-foreground">${p.desc}</p>
+
       <div class="mt-4 overflow-hidden rounded-xl border border-border bg-surface-muted">
         <table class="w-full text-xs"><tbody>
-          ${p.specs.slice(0, 4).map((s, i) => `<tr class="${i !== 0 ? 'border-t border-border' : ''}"><td class="w-1/2 px-3 py-2 text-muted-foreground">${s.label}</td><td class="px-3 py-2 text-left font-semibold text-foreground" dir="ltr">${s.value}</td></tr>`).join('')}
+            ${p.specs.slice(0, 4).map((s, i) => `<tr class="${i !== 0 ? 'border-t border-border' : ''}"><td class="w-1/2 px-3 py-2 text-muted-foreground">${s.label}</td><td class="px-3 py-2 text-left font-semibold text-foreground" dir="ltr">${s.value}</td></tr>`).join('')}
         </tbody></table>
       </div>
-      <div class="mt-4 flex items-baseline justify-between">
+        `
+        if (p.stock <= 0 || !p.is_available) {
+            article += `
+<div class="mt-4 flex items-baseline justify-between">
         <span class="text-[10px] text-muted-foreground">قیمت</span>
-        <span class="text-base font-extrabold text-primary">${p.price}</span>
-      </div>
-      <div class="mt-4 grid grid-cols-1 gap-1">
-        <a href="/shop/products/${p.id}/${p.slug}" class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاهده محصول</a>
-      </div>
+        <span class="text-base font-extrabold text-primary">ناموجود</span>
+        </div>`
+        } else {
+            article += `
+<div class="mt-4 flex items-baseline justify-between">
+        <span class="text-[10px] text-muted-foreground">قیمت</span>
+        <span class="text-base font-extrabold text-primary">${formatPersianNumber(p.price)} تومان</span>
+        </div>`
+        }
+
+        article += `
+<div class="mt-4 grid grid-cols-1 gap-1">
+           <a href="/shop/products/${p.id}/${p.slug}" class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاهده محصول</a>
+            `
+
+        if (p.stock <= 0 || !p.is_available) {
+            article += `
+<button class="rounded-xl border border-border bg-muted-foreground text-white px-3 py-2.5 text-center text-xs font-bold hover:border-primary/40 hover:bg-primary/5" disabled>ناموجود</button>
+`
+        } else {
+            article += `
+                <a href="/shop/cart"
+       class="rounded-xl border border-border bg-primary text-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">افزودن
+        به سبد</a>
+            `
+        }
+
+        article += `
     </div>
-  </article>`;
+    </div>
+    </article>
+    `;
+
+        return article;
     }
 
     function render() {
@@ -446,7 +484,20 @@
             if (state.category !== 'all' && p.category !== state.category) return false;
             if (state.condition !== 'all' && p.condition !== state.condition) return false;
             if (state.location !== 'all' && p.location !== state.location) return false;
-            if (state.query.trim() && !`${p.title} ${p.desc} ${p.brand}`.includes(state.query.trim())) return false;
+            if (state.query.trim() && !`
+    $
+    {
+        p.title
+    }
+    $
+    {
+        p.desc
+    }
+    $
+    {
+        p.brand
+    }
+    `.includes(state.query.trim())) return false;
             return true;
         });
         countEl.textContent = toFa(f.length);

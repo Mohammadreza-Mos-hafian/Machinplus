@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load humanize %}{% load number_filters %}
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -116,7 +116,8 @@
             transition: none !important;
             transform: none !important;
             filter: none !important;
-            padding-top: 3px;
+            padding-top: 2px;
+            font-size: 1rem;
         }
 
         nav + div {
@@ -221,7 +222,7 @@
                 <span
                         class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
                 >
-                    {{ cart_items_count|default:0 }}
+                    {{ cart_items_count|default:1|persian_numbers }}
                 </span>
             </a>
 
@@ -270,14 +271,34 @@
             <div id="highlights" class="mt-4 grid grid-cols-2 gap-2"></div>
 
             <div class="mt-5 grid grid-cols-2 gap-2">
-                <a id="seller-contact"
-                   class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-soft hover:bg-primary-dark">
-                    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                <button
+                        id="add-to-cart"
+                        type="button"
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-soft hover:bg-primary-dark"
+                >
+                    <svg
+                            viewBox="0 0 24 24"
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                    >
+                        <circle cx="9" cy="21" r="1"/>
+                        <circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.96-1.61L23 6H6"/>
                     </svg>
-                    تماس با فروشنده
-                </a>
+
+                    افزودن به سبد
+                </button>
+                <button
+                        id="unavailable"
+                        type="button"
+                        class="hidden inline-flex items-center justify-center gap-1.5 rounded-xl bg-muted-foreground px-4 py-3 text-sm font-bold text-white shadow-soft"
+                >
+                    ناموجود
+                </button>
                 <a href="/#chat"
                    class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-white px-4 py-3 text-sm font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاوره
                     با دستیار</a>
@@ -383,9 +404,19 @@
     document.getElementById('crumb').textContent = product.title;
     document.getElementById('title').textContent = product.title;
     document.getElementById('desc').textContent = product.desc;
-    document.getElementById('price').textContent = product.price;
     document.getElementById('loc-badge').textContent = product.location;
     document.getElementById('brand-badge').textContent = product.brand;
+
+    if (product.stock <= 0 || !product.is_available) {
+        document.getElementById('price').textContent = 'ناموجود';
+        document.querySelector('#highlights + div #unavailable').classList.remove('hidden')
+        document.querySelector('#highlights + div #add-to-cart').classList.add('hidden')
+    } else {
+        document.getElementById('price').textContent = formatPersianNumber(product.price) + ' تومان';
+        document.querySelector('#highlights + div #unavailable').classList.add('hidden')
+        document.querySelector('#highlights + div #add-to-cart').classList.remove('hidden')
+    }
+
 
     const cb = document.getElementById('cond-badge');
     cb.textContent = product.condition === 'new' ? 'نو' : 'کارکرده';
@@ -439,7 +470,7 @@
     document.getElementById('seller-avatar').textContent = product.seller.company.slice(0, 2);
     document.getElementById('seller-company').textContent = product.seller.company;
     document.getElementById('seller-name').textContent = product.seller.name;
-    document.getElementById('seller-rating').textContent = product.seller.rating;
+    document.getElementById('seller-rating').textContent = formatPersianNumber(product.seller.rating);
     document.getElementById('seller-location').textContent = product.seller.location;
     document.getElementById('seller-phone').href = `tel:${product.seller.phone}`;
     document.getElementById('seller-contact').href = `tel:${product.seller.phone}`;
@@ -447,6 +478,13 @@
 
     let rel = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0, 3);
     if (!rel.length) rel = PRODUCTS.filter(p => p.id !== product.id).slice(0, 3);
+
+    function formatPersianNumber(value) {
+        return new Intl.NumberFormat('en-US')
+            .format(value)
+            .replace(/\d/g, digit => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
+    }
+
     document.getElementById('related').innerHTML = rel.map(p => `
   <a href="/shop/products/${p.id}/${p.slug}" class="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated">
     <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
@@ -458,7 +496,7 @@
       <p class="mt-1.5 line-clamp-2 text-xs leading-6 text-muted-foreground">${p.desc}</p>
       <div class="mt-4 flex items-baseline justify-between border-t border-border pt-4">
         <span class="text-[10px] text-muted-foreground">قیمت</span>
-        <span class="text-sm font-extrabold text-primary">${p.price}</span>
+        <span class="text-sm font-extrabold text-primary">${formatPersianNumber(p.price)} تومان</span>
       </div>
     </div>
   </a>`).join('');
