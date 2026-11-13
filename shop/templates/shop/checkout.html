@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load number_filters %}{% load humanize %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -165,7 +165,8 @@
             transition: none !important;
             transform: none !important;
             filter: none !important;
-            padding-top: 3px;
+            padding-top: 2px;
+            font-size: 1rem;
         }
 
         nav + div {
@@ -277,7 +278,7 @@
                 <span
                         class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
                 >
-                    {{ cart_items_count|default:0 }}
+                    {{ cart_items_count|default:1|persian_numbers }}
                 </span>
             </a>
 
@@ -481,7 +482,6 @@
 
                     <!-- Products -->
                     <div class="space-y-4 pb-5 border-b border-border">
-
                         <div class="flex items-center gap-3">
                             <div class="checkout-product-image w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
                                 <img src="{% static 'site/medias/product-1.jpg' %}"
@@ -495,59 +495,14 @@
                                     دستگاه برش صنعتی مدل X200
                                 </h3>
                                 <p class="text-xs text-muted-foreground mt-1">
-                                    تعداد: ۱
+                                    تعداد: {{ 1|persian_numbers }}
                                 </p>
                             </div>
 
                             <span class="text-sm font-bold text-foreground whitespace-nowrap">
-                                ۸۵۰,۰۰۰
+                                {{ 850000|intcomma:False|persian_numbers }}
                             </span>
                         </div>
-
-                        <div class="flex items-center gap-3">
-                            <div class="checkout-product-image w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                <img src="{% static 'site/medias/product-2.jpg' %}"
-                                     alt="موتور الکتریکی"
-                                     class="w-full h-full object-contain p-2"
-                                     onerror="this.style.display='none'">
-                            </div>
-
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-sm font-bold text-foreground leading-6">
-                                    موتور الکتریکی سه فاز
-                                </h3>
-                                <p class="text-xs text-muted-foreground mt-1">
-                                    تعداد: ۲
-                                </p>
-                            </div>
-
-                            <span class="text-sm font-bold text-foreground whitespace-nowrap">
-                                ۲,۵۰۰,۰۰۰
-                            </span>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <div class="checkout-product-image w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                <img src="{% static 'site/medias/product-3.jpg' %}"
-                                     alt="پمپ صنعتی"
-                                     class="w-full h-full object-contain p-2"
-                                     onerror="this.style.display='none'">
-                            </div>
-
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-sm font-bold text-foreground leading-6">
-                                    پمپ صنعتی فشار قوی
-                                </h3>
-                                <p class="text-xs text-muted-foreground mt-1">
-                                    تعداد: ۱
-                                </p>
-                            </div>
-
-                            <span class="text-sm font-bold text-foreground whitespace-nowrap">
-                                ۹۸۰,۰۰۰
-                            </span>
-                        </div>
-
                     </div>
 
 
@@ -556,12 +511,12 @@
 
                         <div class="flex items-center justify-between text-sm">
                             <span class="text-muted-foreground">تعداد اقلام</span>
-                            <span class="font-semibold text-foreground">۴ عدد</span>
+                            <span class="font-semibold text-foreground">{{ 4|persian_numbers }} عدد</span>
                         </div>
 
                         <div class="flex items-center justify-between text-sm">
                             <span class="text-muted-foreground">جمع محصولات</span>
-                            <span class="font-semibold text-foreground">۴,۳۳۰,۰۰۰ تومان</span>
+                            <span class="font-semibold text-foreground">{{ 4330000|intcomma:False|persian_numbers }} تومان</span>
                         </div>
 
                         <div class="flex items-center justify-between text-sm">
@@ -578,7 +533,7 @@
 
                             <div class="text-left">
                                 <div class="text-xl font-extrabold text-primary">
-                                    ۴,۳۳۰,۰۰۰
+                                    {{ 4330000|intcomma:False|persian_numbers }}
                                 </div>
                                 <span class="text-xs text-muted-foreground">تومان</span>
                             </div>

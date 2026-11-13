@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load number_filters %}{% load humanize %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -116,7 +116,8 @@
             transition: none !important;
             transform: none !important;
             filter: none !important;
-            padding-top: 3px;
+            padding-top: 2px;
+            font-size: 1rem;
         }
 
         nav + div {
@@ -260,7 +261,7 @@
                 </svg>
 
                 <span class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
-                    {{ cart_items_count|default:0 }}
+                    {{ cart_items_count|default:1|persian_numbers }}
                 </span>
             </a>
         </div>
@@ -373,7 +374,7 @@
                         <div>
                             <p class="text-xs text-gray-500 mb-2">شماره موبایل</p>
                             <p class="text-sm font-semibold text-gray-800" dir="rtl">
-                                09123456789
+                                {{ '09123456789'|persian_numbers }}
                             </p>
                         </div>
                     </div>
@@ -399,7 +400,7 @@
 
                         <p class="text-xs text-gray-500 mt-3">
                             کد پستی:
-                            <span class="font-semibold text-gray-700" dir="ltr">1234567890</span>
+                            <span class="font-semibold text-gray-700" dir="ltr">{{ 1234567890|persian_numbers }}</span>
                         </p>
                     </div>
                 </div>
@@ -422,7 +423,7 @@
                                 محصولات سفارش
                             </h2>
                             <p class="text-xs text-gray-500 mt-1">
-                                ۳ محصول در این سفارش
+                                {{ 3|persian_numbers }} محصول در این سفارش
                             </p>
                         </div>
                     </div>
@@ -443,68 +444,17 @@
                                 لنت ترمز جلو خودرو
                             </h3>
                             <p class="text-xs text-gray-500 mt-2">
-                                تعداد: ۱ عدد
+                                تعداد: {{ 1|persian_numbers }} عدد
                             </p>
                         </div>
 
                         <div class="text-left shrink-0">
                             <p class="text-sm font-extrabold text-primary">
-                                ۸۵۰,۰۰۰
+                                {{ 850000|intcomma:False|persian_numbers }}
                             </p>
                             <p class="text-[11px] text-gray-400 mt-1">تومان</p>
                         </div>
                     </div>
-
-                    <!-- Product 2 -->
-                    <div class="p-4 sm:p-5 flex items-center gap-4">
-                        <div class="w-20 h-20 shrink-0 rounded-xl bg-muted border border-border flex items-center justify-center overflow-hidden">
-                            <img src="{% static 'site/medias/product-2.jpg' %}"
-                                 alt="محصول دوم"
-                                 class="w-full h-full object-cover"/>
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-sm font-bold text-gray-800">
-                                فیلتر روغن خودرو
-                            </h3>
-                            <p class="text-xs text-gray-500 mt-2">
-                                تعداد: ۲ عدد
-                            </p>
-                        </div>
-
-                        <div class="text-left shrink-0">
-                            <p class="text-sm font-extrabold text-primary">
-                                ۱,۲۵۰,۰۰۰
-                            </p>
-                            <p class="text-[11px] text-gray-400 mt-1">تومان</p>
-                        </div>
-                    </div>
-
-                    <!-- Product 3 -->
-                    <div class="p-4 sm:p-5 flex items-center gap-4">
-                        <div class="w-20 h-20 shrink-0 rounded-xl bg-muted border border-border flex items-center justify-center overflow-hidden">
-                            <img src="{% static 'site/medias/home-ind.png' %}"
-                                 alt="محصول سوم"
-                                 class="w-full h-full object-cover"/>
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-sm font-bold text-gray-800">
-                                شمع موتور خودرو
-                            </h3>
-                            <p class="text-xs text-gray-500 mt-2">
-                                تعداد: ۱ عدد
-                            </p>
-                        </div>
-
-                        <div class="text-left shrink-0">
-                            <p class="text-sm font-extrabold text-primary">
-                                ۹۸۰,۰۰۰
-                            </p>
-                            <p class="text-[11px] text-gray-400 mt-1">تومان</p>
-                        </div>
-                    </div>
-
                 </div>
             </section>
         </div>
@@ -534,17 +484,17 @@
                 <div class="space-y-4">
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500">جمع محصولات</span>
-                        <span class="font-semibold text-gray-800">۴,۳۳۰,۰۰۰ تومان</span>
+                        <span class="font-semibold text-gray-800">{{ 4330000|intcomma:False|persian_numbers }} تومان</span>
                     </div>
 
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500">هزینه ارسال</span>
-                        <span class="font-semibold text-gray-800">۵۰,۰۰۰ تومان</span>
+                        <span class="font-semibold text-gray-800">{{ 50000|intcomma:False|persian_numbers }} تومان</span>
                     </div>
 
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500">تخفیف</span>
-                        <span class="font-semibold text-green-600">۵۰,۰۰۰- تومان</span>
+                        <span class="font-semibold text-green-600">{{ 50000|intcomma:False|persian_numbers }}- تومان</span>
                     </div>
 
                     <div class="h-px border-t border-dashed border-border"></div>
@@ -556,7 +506,7 @@
 
                         <div class="text-left">
                             <p class="text-xl font-extrabold text-primary">
-                                ۴,۳۳۰,۰۰۰
+                                {{ 4330000|intcomma:False|persian_numbers }}
                             </p>
                             <p class="text-xs text-gray-500 mt-1">تومان</p>
                         </div>

@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load number_filters %}{% load humanize %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -136,7 +136,8 @@
             transition: none !important;
             transform: none !important;
             filter: none !important;
-            padding-top: 3px;
+            padding-top: 2px;
+            font-size: 1rem;
         }
 
         nav + div {
@@ -298,7 +299,7 @@
                 <span
                         class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
                 >
-                    {{ cart_items_count|default:0 }}
+                    {{ cart_items_count|default:1|persian_numbers }}
                 </span>
             </a>
 
@@ -371,7 +372,7 @@
 
                             <span id="items-badge"
                                   class="bg-muted text-muted-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                            ۳ محصول
+                                {{ 3 | persian_numbers }} محصول
                         </span>
                         </div>
 
@@ -478,7 +479,7 @@
                                         </p>
 
                                         <p class="font-extrabold text-primary">
-                                            <span class="unit-price">۸۵۰,۰۰۰</span>
+                                            <span class="unit-price">{{ 850000|intcomma:False|persian_numbers }}</span>
                                             <span class="text-xs font-normal text-muted-foreground">تومان</span>
                                         </p>
                                     </div>
@@ -487,187 +488,6 @@
 
                             </div>
                         </article>
-
-
-                        <!-- Product 2 -->
-                        <article class="cart-item flex flex-col sm:flex-row gap-4 p-5 sm:p-6"
-                                 data-id="2"
-                                 data-price="1250000">
-
-                            <div class="product-image w-full sm:w-28 h-36 sm:h-28 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                <img src="{% static 'site/medias/product-2.jpg' %}"
-                                     alt="قطعه صنعتی"
-                                     class="w-full h-full object-contain p-3"
-                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-
-                                <div class="hidden w-full h-full items-center justify-center text-muted-foreground">
-                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div class="w-full flex-1 min-w-0 flex flex-col justify-between gap-4">
-
-                                <div>
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div>
-                                        <span class="text-xs text-muted-foreground">
-                                            قطعات یدکی
-                                        </span>
-
-                                            <h3 class="font-bold text-foreground mt-1 leading-7">
-                                                موتور الکتریکی سه فاز
-                                            </h3>
-                                        </div>
-
-                                        <button type="button"
-                                                class="remove-btn flex-shrink-0 p-2 rounded-lg text-muted-foreground transition"
-                                                aria-label="حذف محصول">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                      stroke-width="1.7"
-                                                      d="M6 7h12m-10 0V5h8v2m-9 0l1 13h8l1-13M10 11v5m4-5v5"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <p class="text-xs text-muted-foreground mt-2">
-                                        کد محصول: MP-1002
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-row items-center justify-between gap-4 w-full">
-
-                                    <div>
-                                        <p class="text-xs text-muted-foreground mb-2">
-                                            تعداد
-                                        </p>
-
-                                        <div class="flex items-center border border-border rounded-lg w-fit overflow-hidden">
-                                            <button type="button"
-                                                    class="quantity-btn plus w-9 h-9 flex items-center justify-center text-foreground">
-                                                +
-                                            </button>
-
-                                            <span class="quantity-value w-10 text-center text-sm font-bold"
-                                                  aria-live="polite">۲</span>
-
-                                            <button type="button"
-                                                    class="quantity-btn minus w-9 h-9 flex items-center justify-center text-foreground">
-                                                −
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-left">
-                                        <p class="text-xs text-muted-foreground mb-1">
-                                            قیمت واحد
-                                        </p>
-
-                                        <p class="font-extrabold text-primary">
-                                            <span class="unit-price">۱,۲۵۰,۰۰۰</span>
-                                            <span class="text-xs font-normal text-muted-foreground">تومان</span>
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </article>
-
-
-                        <!-- Product 3 -->
-                        <article class="cart-item flex flex-col sm:flex-row gap-4 p-5 sm:p-6"
-                                 data-id="3"
-                                 data-price="980000">
-
-                            <div class="product-image w-full sm:w-28 h-36 sm:h-28 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                <img src="{% static 'site/medias/product-3.jpg' %}"
-                                     alt="تجهیزات صنعتی"
-                                     class="w-full h-full object-contain p-3"
-                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-
-                                <div class="hidden w-full h-full items-center justify-center text-muted-foreground">
-                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div class="w-full flex-1 min-w-0 flex flex-col justify-between gap-4">
-
-                                <div>
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div>
-                                        <span class="text-xs text-muted-foreground">
-                                            تجهیزات تولید
-                                        </span>
-
-                                            <h3 class="font-bold text-foreground mt-1 leading-7">
-                                                پمپ صنعتی فشار قوی
-                                            </h3>
-                                        </div>
-
-                                        <button type="button"
-                                                class="remove-btn flex-shrink-0 p-2 rounded-lg text-muted-foreground transition"
-                                                aria-label="حذف محصول">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                      stroke-width="1.7"
-                                                      d="M6 7h12m-10 0V5h8v2m-9 0l1 13h8l1-13M10 11v5m4-5v5"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <p class="text-xs text-muted-foreground mt-2">
-                                        کد محصول: MP-1003
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-row items-center justify-between gap-4 w-full">
-
-                                    <div>
-                                        <p class="text-xs text-muted-foreground mb-2">
-                                            تعداد
-                                        </p>
-
-                                        <div class="flex items-center border border-border rounded-lg w-fit overflow-hidden">
-                                            <button type="button"
-                                                    class="quantity-btn plus w-9 h-9 flex items-center justify-center text-foreground">
-                                                +
-                                            </button>
-
-                                            <span class="quantity-value w-10 text-center text-sm font-bold"
-                                                  aria-live="polite">۱</span>
-
-                                            <button type="button"
-                                                    class="quantity-btn minus w-9 h-9 flex items-center justify-center text-foreground">
-                                                −
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-left">
-                                        <p class="text-xs text-muted-foreground mb-1">
-                                            قیمت واحد
-                                        </p>
-
-                                        <p class="font-extrabold text-primary">
-                                            <span class="unit-price">۹۸۰,۰۰۰</span>
-                                            <span class="text-xs font-normal text-muted-foreground">تومان</span>
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </article>
-
                     </div>
                 </div>
             </section>
@@ -689,7 +509,7 @@
                         </span>
 
                             <span id="summary-count" class="font-semibold text-foreground">
-                            ۴ عدد
+                            {{ 4 | intcomma:False | persian_numbers }} عدد
                         </span>
                         </div>
 
@@ -699,7 +519,7 @@
                         </span>
 
                             <span class="font-semibold text-foreground">
-                            <span id="subtotal">۴,۳۳۰,۰۰۰</span>
+                            <span id="subtotal">{{ 4330000|intcomma:False|persian_numbers }}</span>
                             تومان
                         </span>
                         </div>
@@ -725,7 +545,7 @@
 
                         <div class="text-left">
                             <div class="text-xl font-extrabold text-primary">
-                                <span id="total">۴,۳۳۰,۰۰۰</span>
+                                <span id="total">{{ 4330000|intcomma:False|persian_numbers }}</span>
                             </div>
                             <span class="text-xs text-muted-foreground">تومان</span>
                         </div>
@@ -820,7 +640,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         const cartItemsWrapper = document.getElementById('cart-items-wrapper');
         const cartItems = document.getElementById('cart-items');
         const emptyCart = document.getElementById('empty-cart');
@@ -833,9 +652,37 @@
 
         const clearCartButton = document.getElementById('clear-cart');
 
-        const formatPrice = (price) => {
-            return new Intl.NumberFormat('fa-IR').format(price);
-        };
+        // تبدیل اعداد فارسی و عربی به انگلیسی برای محاسبات
+        function getNumber(value) {
+            return Number(
+                String(value)
+                    .replace(/[۰-۹]/g, digit =>
+                        '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)
+                    )
+                    .replace(/[٠-٩]/g, digit =>
+                        '٠١٢٣٤٥٦٧٨٩'.indexOf(digit)
+                    )
+                    .replace(/,/g, '')
+            );
+        }
+
+        // تبدیل عدد به فرمت فارسی همراه با جداکننده هزارگان
+        function formatPersianNumber(value) {
+            return new Intl.NumberFormat('en-US')
+                .format(value)
+                .replace(/\d/g, digit => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
+        }
+
+        function getQuantity(item) {
+            return getNumber(
+                item.querySelector('.quantity-value').textContent
+            );
+        }
+
+        function updateQuantity(item, quantity) {
+            item.querySelector('.quantity-value').textContent =
+                formatPersianNumber(quantity);
+        }
 
         function updateCart() {
             const items = cartItems.querySelectorAll('.cart-item');
@@ -844,59 +691,52 @@
             let totalQuantity = 0;
 
             items.forEach(item => {
-                const price = Number(item.dataset.price);
-                const quantity = Number(
-                    item.querySelector('.quantity-value').textContent.replace(/[۰-۹]/g, digit =>
-                        '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)
-                    )
-                );
+                const price = getNumber(item.dataset.price);
+                const quantity = getQuantity(item);
 
                 subtotal += price * quantity;
                 totalQuantity += quantity;
             });
 
-            subtotalElement.textContent = formatPrice(subtotal);
-            totalElement.textContent = formatPrice(subtotal);
+            // نمایش قیمت‌ها با اعداد فارسی و جداکننده هزارگان
+            subtotalElement.textContent = formatPersianNumber(subtotal);
+            totalElement.textContent = formatPersianNumber(subtotal);
 
-            itemsBadge.textContent = formatPrice(items.length) + ' محصول';
-            summaryCount.textContent = formatPrice(totalQuantity) + ' عدد';
+            // نمایش تعداد محصولات و تعداد کل کالاها
+            itemsBadge.textContent =
+                formatPersianNumber(items.length) + ' محصول';
 
+            summaryCount.textContent =
+                formatPersianNumber(totalQuantity) + ' عدد';
+
+            // نمایش وضعیت سبد خرید
             if (items.length === 0) {
                 cartItemsWrapper.classList.add('hidden');
-
                 emptyCart.classList.remove('hidden');
                 emptyCart.classList.add('flex');
             } else {
                 cartItemsWrapper.classList.remove('hidden');
-
                 emptyCart.classList.add('hidden');
                 emptyCart.classList.remove('flex');
             }
         }
 
-        function getQuantity(element) {
-            const value = element.querySelector('.quantity-value').textContent;
-            return Number(value.replace(/[۰-۹]/g, digit =>
-                '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)
-            ));
-        }
-
-        function updateQuantity(element, quantity) {
-            element.querySelector('.quantity-value').textContent = formatPrice(quantity);
-        }
-
+        // مدیریت افزایش، کاهش و حذف محصول
         cartItems.addEventListener('click', function (event) {
-            const item = event.target.closest('.cart-item');
+            const button = event.target.closest('button');
+
+            if (!button) return;
+
+            const item = button.closest('.cart-item');
 
             if (!item) return;
 
-            if (event.target.closest('.plus')) {
-                const quantity = getQuantity(item);
-                updateQuantity(item, quantity + 1);
+            if (button.classList.contains('plus')) {
+                updateQuantity(item, getQuantity(item) + 1);
                 updateCart();
             }
 
-            if (event.target.closest('.minus')) {
+            if (button.classList.contains('minus')) {
                 const quantity = getQuantity(item);
 
                 if (quantity > 1) {
@@ -905,21 +745,19 @@
                 }
             }
 
-            if (event.target.closest('.remove-btn')) {
+            if (button.classList.contains('remove-btn')) {
                 item.remove();
                 updateCart();
             }
         });
 
+        // خالی کردن کامل سبد خرید
         clearCartButton.addEventListener('click', function () {
             cartItems.innerHTML = '';
             updateCart();
         });
 
-        document.getElementById('continue-shopping').addEventListener('click', function () {
-            window.location.href = '#products';
-        });
-
+        // اجرای اولیه برای هماهنگ کردن تمام مقادیر
         updateCart();
     });
 </script>
