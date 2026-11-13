@@ -1,8 +1,5 @@
-import json
-
 from django.db.models import Count
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 
 from shop.models import Product
 
@@ -57,7 +54,11 @@ class ProductListView(ListView):
                     "category": getattr(product, "category", ""),
                     "location": getattr(product, "location", ""),
                     "condition": "new",
-                    "price": getattr(product, "price", "تماس بگیرید"),
+                    "price": getattr(product, "price", 0),
+                    "old_price": getattr(product, "old_price", 0),
+                    "price_on_request": getattr(product, "price_on_request", None),
+                    "stock": getattr(product, "stock", 0),
+                    "is_available": getattr(product, "is_available", None),
                     "brand": getattr(product, "brand", ""),
                     "gallery": [
                         img.image.url
@@ -116,7 +117,11 @@ class ProductDetailView(DetailView):
             "category": getattr(product, "category", ""),
             "location": getattr(product, "location", ""),
             "condition": "new",
-            "price": getattr(product, "price", "تماس بگیرید"),
+            "price": getattr(product, "price", 0),
+            "old_price": getattr(product, "old_price", 0),
+            "price_on_request": getattr(product, "price_on_request", None),
+            "stock": getattr(product, "stock", 0),
+            "is_available": getattr(product, "is_available", None),
             "brand": getattr(product, "brand", ""),
             "gallery": [
                 img.image.url
@@ -162,3 +167,19 @@ class ProductDetailView(DetailView):
             })
 
         return data
+
+
+class CartListView(TemplateView):
+    template_name = 'shop/cart.html'
+
+
+class CheckoutView(TemplateView):
+    template_name = 'shop/checkout.html'
+
+
+class PaymentView(TemplateView):
+    template_name = 'shop/payment.html'
+
+
+class PaymentResultView(TemplateView):
+    template_name = 'shop/payment_result.html'
