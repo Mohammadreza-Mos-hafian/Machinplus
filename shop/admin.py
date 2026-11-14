@@ -43,11 +43,17 @@ class ProductFeatureInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
+        "sku",
         "title",
         "main_image_preview",
         "seller_count",
         "feature_count",
         "gallery_image_count",
+        "is_available",
+        "stock",
+        "price",
+        "old_price",
+        "price_on_request",
         "is_active",
         "created_at",
     )
@@ -77,12 +83,19 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
     fields = (
+        "sku",
         "title",
+        "slug",
         "main_image",
         "main_image_preview",
         "summary",
         "description",
         "sellers",
+        "is_available",
+        "stock",
+        "price",
+        "old_price",
+        "price_on_request",
         "is_active",
         "seller_count",
         "feature_count",
@@ -95,6 +108,10 @@ class ProductAdmin(admin.ModelAdmin):
         ProductFeatureInline,
         ProductImageInline,
     )
+
+    prepopulated_fields = {
+        "slug": ("title",)
+    }
 
     ordering = ("-created_at",)
     list_per_page = 25

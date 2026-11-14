@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "crm",
     "shop",
     "inquiry",
+    "cart",
 ]
 
 MIDDLEWARE = [

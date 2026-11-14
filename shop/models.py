@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, MinValueValidator
 
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.db.models import Q, F
+from django.utils.text import slugify
 
 
 # Create your models here.
@@ -11,11 +13,20 @@ class Product(models.Model):
         verbose_name="عنوان محصول"
     )
 
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        allow_unicode=True,
+        null=True,
+        blank=True,
+        verbose_name="آدرس اختصاصی",
+        help_text="مثال: volvo-fh16 یا روغن-موتور"
+    )
+
     sku = models.CharField(
         max_length=100,
         unique=True,
         null=True,
-        blank=True,
         verbose_name='کد اختصاصی'
     )
 
@@ -46,25 +57,16 @@ class Product(models.Model):
         verbose_name="فروشندگان محصول"
     )
 
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        verbose_name='قیمت',
-        validators=[
-            MinValueValidator(0)
-        ]
-    )
-
-    old_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    price = models.PositiveBigIntegerField(
         null=True,
         blank=True,
-        verbose_name='قیمت قدیمی',
-        validators=[
-            MinValueValidator(0)
-        ]
+        verbose_name='قیمت (تومان)'
+    )
+
+    old_price = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='قیمت قبلی (تومان)'
     )
 
     stock = models.PositiveIntegerField(
@@ -101,6 +103,43 @@ class Product(models.Model):
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
         ordering = ["-created_at"]
+
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                        Q(price_on_request=True, price__isnull=True)
+                        |
+                        Q(price_on_request=False, price__gt=0)
+                ),
+                name='product_valid_price_state',
+            ),
+
+            models.CheckConstraint(
+                condition=(
+                        Q(old_price__isnull=True)
+                        |
+                        (
+                                Q(price__isnull=False)
+                                & Q(old_price__gt=F('price'))
+                        )
+                ),
+                name='product_old_price_greater_than_price',
+            ),
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title, allow_unicode=True)
+            slug = base_slug or "product"
+            counter = 2
+
+            while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug or 'product'}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

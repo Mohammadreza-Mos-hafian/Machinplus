@@ -173,7 +173,7 @@
                 </svg>
                 مشاوره رایگان
             </a>
-            <a href="{% url 'shop:cart_list' %}"
+            <a href="{% url 'cart:cart_detail' %}"
                aria-label="سبد خرید"
                class="cart-header-icon relative inline-flex items-center justify-center no-underline"
             >
@@ -227,7 +227,7 @@
                 <span
                         class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white"
                 >
-                    {{ cart_items_count|default:1|persian_numbers }}
+                    {{ cart_items_count|persian_numbers }}
                 </span>
             </a>
 
@@ -325,6 +325,40 @@
                 پاک کردن فیلترها
             </button>
         </div>
+
+        {% if is_paginated %}
+            <nav class="mt-8 flex items-center justify-center gap-2"
+                 aria-label="صفحه‌بندی محصولات">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"
+                       class="rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold hover:border-primary">
+                        قبلی
+                    </a>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <span class="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white">
+                    {{ num|persian_numbers }}
+                </span>
+                    {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                        <a href="?page={{ num }}"
+                           class="rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold hover:border-primary">
+                            {{ num|persian_numbers }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"
+                       class="rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold hover:border-primary">
+                        بعدی
+                    </a>
+                {% endif %}
+
+            </nav>
+        {% endif %}
     </main>
 </div>
 
@@ -418,65 +452,158 @@
             .replace(/\d/g, digit => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
     }
 
+    const CSRF_TOKEN = "{{ csrf_token }}";
+
     function card(p) {
+        const priceOnRequest =
+            p.price_on_request === true ||
+            p.price === null ||
+            p.price === undefined;
+
+        const unavailable =
+            Number(p.stock) <= 0 ||
+            !p.is_available;
+
         let article = `
-  <article class="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated">
-    <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
-      <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-      <div class="absolute right-3 top-3 flex gap-1.5">
-        <span class="rounded-full px-2.5 py-1 text-[10px] font-bold shadow-soft ${p.condition === 'new' ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}">${p.condition === 'new' ? 'نو' : 'کارکرده'}</span>
-      </div>
-      <div class="absolute bottom-3 right-3 rounded-lg bg-black/60 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-sm">${p.brand}</div>
-    </div>
-    <div class="flex flex-1 flex-col p-5">
-      <h3 class="text-base font-bold leading-7 text-foreground">${p.title}</h3>
-      <p class="mt-1.5 line-clamp-2 text-xs leading-6 text-muted-foreground">${p.desc}</p>
+        <article class="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated">
 
-      <div class="mt-4 overflow-hidden rounded-xl border border-border bg-surface-muted">
-        <table class="w-full text-xs"><tbody>
-            ${p.specs.slice(0, 4).map((s, i) => `<tr class="${i !== 0 ? 'border-t border-border' : ''}"><td class="w-1/2 px-3 py-2 text-muted-foreground">${s.label}</td><td class="px-3 py-2 text-left font-semibold text-foreground" dir="ltr">${s.value}</td></tr>`).join('')}
-        </tbody></table>
-      </div>
-        `
-        if (p.stock <= 0 || !p.is_available) {
+            <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
+                <img
+                    src="${p.image || ''}"
+                    alt="${p.title}"
+                    loading="lazy"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+
+                <div class="absolute right-3 top-3 flex gap-1.5">
+                    <span class="rounded-full px-2.5 py-1 text-[10px] font-bold shadow-soft ${
+            p.condition === 'new'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-amber-500 text-white'
+        }">
+                        ${p.condition === 'new' ? 'نو' : 'کارکرده'}
+                    </span>
+                </div>
+
+                <div class="absolute bottom-3 right-3 rounded-lg bg-black/60 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
+                    ${p.brand || ''}
+                </div>
+            </div>
+
+            <div class="flex flex-1 flex-col p-5">
+
+                <h3 class="text-base font-bold leading-7 text-foreground">
+                    ${p.title}
+                </h3>
+
+                <p class="mt-1.5 line-clamp-2 text-xs leading-6 text-muted-foreground">
+                    ${p.desc || ''}
+                </p>
+
+                <div class="mt-4 overflow-hidden rounded-xl border border-border bg-surface-muted">
+                    <table class="w-full text-xs">
+                        <tbody>
+                            ${(p.specs || []).slice(0, 4).map((s, i) => `
+                                <tr class="${i ? 'border-t border-border' : ''}">
+                                    <td class="w-1/2 px-3 py-2 text-muted-foreground">
+                                        ${s.label}
+                                    </td>
+                                    <td class="px-3 py-2 text-left font-semibold text-foreground" dir="ltr">
+                                        ${s.value}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between gap-2">
+                    <span class="text-[10px] text-muted-foreground">
+                        قیمت
+                    </span>
+
+                    ${
+            priceOnRequest
+                ? `
+                                <span class="text-sm font-extrabold text-amber-600">
+                                    استعلام قیمت
+                                </span>
+                            `
+                : `
+                                <span class="text-base font-extrabold ${
+                    unavailable ? 'text-muted-foreground' : 'text-primary'
+                }">
+                                    ${
+                    unavailable
+                        ? 'ناموجود'
+                        : formatPersianNumber(p.price) + ' تومان'
+                }
+                                </span>
+                            `
+        }
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-2">
+
+                    <a
+                        href="/shop/products/${p.slug}/"
+                        class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5"
+                    >
+                        ${priceOnRequest ? 'مشاهده و استعلام قیمت' : 'مشاهده محصول'}
+                    </a>
+    `;
+
+        if (priceOnRequest) {
             article += `
-<div class="mt-4 flex items-baseline justify-between">
-        <span class="text-[10px] text-muted-foreground">قیمت</span>
-        <span class="text-base font-extrabold text-primary">ناموجود</span>
-        </div>`
+            <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-center text-xs font-semibold text-amber-700">
+                برای اطلاع از قیمت با فروشنده تماس بگیرید.
+            </div>
+        `;
+        } else if (unavailable) {
+            article += `
+            <button
+                type="button"
+                disabled
+                class="rounded-xl border border-border bg-muted-foreground px-3 py-2.5 text-center text-xs font-bold text-white"
+            >
+                ناموجود
+            </button>
+        `;
+        } else if (p.is_in_cart) {
+            article += `
+            <button
+                type="button"
+                disabled
+                class="rounded-xl border border-border bg-emerald-600 px-3 py-2.5 text-center text-xs font-bold text-white"
+            >
+                در سبد خرید شما موجود است
+            </button>
+        `;
         } else {
             article += `
-<div class="mt-4 flex items-baseline justify-between">
-        <span class="text-[10px] text-muted-foreground">قیمت</span>
-        <span class="text-base font-extrabold text-primary">${formatPersianNumber(p.price)} تومان</span>
-        </div>`
+            <form method="post" action="{% url 'cart:add_to_cart' %}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                <input type="hidden" name="product_id" value="${p.id}">
+
+                <button
+                    type="submit"
+                    class="w-full rounded-xl border border-border bg-primary px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-primary-dark"
+                >
+                    افزودن به سبد خرید
+                </button>
+            </form>
+        `;
         }
 
         article += `
-<div class="mt-4 grid grid-cols-1 gap-1">
-           <a href="/shop/products/${p.id}/${p.slug}" class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاهده محصول</a>
-            `
-
-        if (p.stock <= 0 || !p.is_available) {
-            article += `
-<button class="rounded-xl border border-border bg-muted-foreground text-white px-3 py-2.5 text-center text-xs font-bold hover:border-primary/40 hover:bg-primary/5" disabled>ناموجود</button>
-`
-        } else {
-            article += `
-                <a href="/shop/cart"
-       class="rounded-xl border border-border bg-primary text-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">افزودن
-        به سبد</a>
-            `
-        }
-
-        article += `
-    </div>
-    </div>
-    </article>
+                </div>
+            </div>
+        </article>
     `;
 
         return article;
     }
+
 
     function render() {
         renderFilters();
