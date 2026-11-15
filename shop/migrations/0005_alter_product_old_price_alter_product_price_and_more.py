@@ -21,8 +21,13 @@ class Migration(migrations.Migration):
             field=models.PositiveBigIntegerField(blank=True, null=True, verbose_name='قیمت (تومان)'),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='sku',
-            field=models.CharField(max_length=100, unique=True, verbose_name='کد اختصاصی'),
-        ),
+    model_name='product',
+    name='sku',
+    field=models.CharField(
+        max_length=100,
+        null=True,
+        unique=True,
+        verbose_name='کد اختصاصی'
+    ),
+),
     ]

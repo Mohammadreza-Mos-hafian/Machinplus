@@ -105,3 +105,7 @@ def chatbot_view(request):
         "messages": messages
     }
     return render(request, 'core/chatbot.html', context=context)
+
+
+def catalog_view(request):
+    return render(request, "core/catalog.html")

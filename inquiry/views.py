@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta
+from .crm_sync import push_lead_to_crm
 
 from django.conf import settings
 from django.core.cache import cache
@@ -80,6 +81,7 @@ class InquiryView(View):
         if existing:
             Lead.objects.filter(pk=existing.pk).update(**fields, submissions=F("submissions") + 1, updated_at=timezone.now())
             existing.refresh_from_db()
+            push_lead_to_crm(existing)
             notify_new_lead(existing, is_repeat=True)
             return JsonResponse({"ok": True, "id": existing.pk, "repeat": True})
 

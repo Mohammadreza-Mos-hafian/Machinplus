@@ -1,5 +1,7 @@
 import json
 
+from urllib.parse import unquote
+from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.views.generic import ListView, DetailView
 
@@ -16,6 +18,16 @@ class ProductListView(ListView):
     template_name = "shop/product_list.html"
     context_object_name = "products"
     paginate_by = 12
+
+    def get_object(self, queryset=None):
+        queryset = queryset or self.get_queryset()
+
+        slug = unquote(self.kwargs[self.slug_url_kwarg])
+
+        return get_object_or_404(
+            queryset,
+            **{self.slug_field: slug}
+        )
 
     def get_queryset(self):
         """Return active products with related data loaded efficiently."""
@@ -65,7 +77,7 @@ class ProductListView(ListView):
                 {
                     "id": product.pk,
                     "title": product.title,
-                    "slug": product.title.replace(" ", "-"),
+                    "slug": product.slug,
                     "desc": product.summary,
                     "image": (
                         product.main_image.url
@@ -255,7 +267,7 @@ class ProductDetailView(DetailView):
             data.append({
                 "id": product.pk,
                 "title": product.title,
-                "slug": product.title.replace(" ", "-"),
+                "slug": product.slug,
                 "desc": product.summary,
                 "image": product.main_image.url if product.main_image else "",
                 "condition": "new",

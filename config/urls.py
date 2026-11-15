@@ -18,7 +18,19 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from config import settings
-from django.urls import path, include
+from django.urls import path, include, register_converter
+
+from django.urls.converters import StringConverter
+from urllib.parse import unquote
+
+class PersianSlugConverter(StringConverter):
+    regex = r"(?:[-\w\u0600-\u06FF]|%[0-9A-Fa-f]{2})+"
+
+    def to_python(self, value):
+        return unquote(value)
+
+
+register_converter(PersianSlugConverter, 'persian_slug')
 
 urlpatterns = [
     path("", include('core.urls')),

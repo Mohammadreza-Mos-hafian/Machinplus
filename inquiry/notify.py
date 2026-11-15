@@ -14,8 +14,22 @@ import threading
 import urllib.request
 
 from django.conf import settings
+from decouple import config, Csv
 
 log = logging.getLogger(__name__)
+
+BOT_TOKEN = config('INQUIRY_NOTIFY_BOT_TOKEN', default='')
+
+CHAT_IDS = config(
+    'INQUIRY_NOTIFY_CHAT_IDS',
+    default='',
+    cast=Csv()
+)
+
+API_URL = config(
+    'INQUIRY_NOTIFY_API',
+    default='https://tapi.bale.ai/bot{token}/sendMessage'
+)
 
 
 def _send(url, chat_id, text):
@@ -28,12 +42,12 @@ def _send(url, chat_id, text):
 
 
 def notify_new_lead(lead, is_repeat=False):
-    token = getattr(settings, "INQUIRY_NOTIFY_BOT_TOKEN", "")
-    chats = getattr(settings, "INQUIRY_NOTIFY_CHAT_IDS", [])
+    token = BOT_TOKEN
+    chats = CHAT_IDS
     if not token or not chats:
         return
-    api = getattr(settings, "INQUIRY_NOTIFY_API", "https://tapi.bale.ai/bot{token}/sendMessage")
-    title = "ثبت دوباره" if is_repeat else "درخواست مشاوره جدید"
+    api = API_URL
+    title = "ثبت دوباره(در CRM  ثبت شد)" if is_repeat else "درخواست مشاوره جدید (در CRM ثبت شد)"
     text = (
         f"{title}\n"
         f"نام: {lead.name}\n"
