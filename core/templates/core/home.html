@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{%load humanize%}{%load number_filters%}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -303,7 +303,7 @@
                         <span class="h-1 w-1 rounded-full bg-accent"></span>تجهیزات منتخب
                     </div>
                     <h2 class="text-3xl font-extrabold text-foreground sm:text-4xl">محصولات پرکاربرد</h2></div>
-                <a href="{% url 'shop:product_list' %}" data-nav="chat"
+                <a href="{% url 'shop:product_list' %}"
                    class="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-dark">مشاهده
                     و استعلام همه محصولات
                     <svg viewBox="0 0 24 24" class="h-4 w-4 rotate-180" fill="none" stroke="currentColor"
@@ -323,8 +323,13 @@
                         <div class="p-6">
                             <h3 class="mt-2 text-xl font-extrabold text-foreground">{{ product.title }}</h3>
                             <span class="text-xs font-bold text-accent">{{ product.summary|truncatechars:15 }}</span>
-                            <a href="{% url 'shop:product_detail' product.slug %}"
-                               class="text-xs font-bold text-accent"> | قیمت: تماس بگیرید</a>
+                            {%if not product.price_on_request%}
+                                <a href="{% url 'shop:product_detail' product.slug %}"
+                                class="text-xs font-bold text-accent"> | {{product.price | intcomma:False | persian_numbers}} تومان</a>
+                            {%else%}
+                                <a href="{% url 'shop:product_detail' product.slug %}"
+                                class="text-xs font-bold text-accent"> | قیمت: استعلام قیمت</a>
+                            {%endif%}
                             <a href="{% url 'shop:product_detail' product.slug %}"
                                style="margin-top: 10px;display: block"
                                class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاهده
