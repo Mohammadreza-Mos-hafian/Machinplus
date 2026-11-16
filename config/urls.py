@@ -14,7 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls.py import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls.py'))
 """
-
+from django.conf.urls import handler400
 from django.contrib import admin
 from django.conf.urls.static import static
 from config import settings
@@ -22,6 +22,7 @@ from django.urls import path, include, register_converter
 
 from django.urls.converters import StringConverter
 from urllib.parse import unquote
+
 
 class PersianSlugConverter(StringConverter):
     regex = r"(?:[-\w\u0600-\u06FF]|%[0-9A-Fa-f]{2})+"
@@ -46,3 +47,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = "core.views.custom_404"
+handler500 = "core.views.custom_500"

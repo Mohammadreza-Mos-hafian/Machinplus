@@ -1,0 +1,535 @@
+{% load static %}{% load number_filters %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-N9PLF9XR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+    </script>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>{% block title %}ماشین پلاس{% endblock %}</title>
+
+    <meta name="description"
+          content="ماشین پلاس، راهکار جامع تامین و نوسازی ماشین آلات صنعتی با امکان خرید اعتباری."/>
+
+    <meta name="robots" content="noindex, follow">
+    <meta name="googlebot" content="noindex, follow">
+
+    <meta name="keywords"
+          content="ماشین پلاس, ماشین آلات صنعتی, خرید دستگاه HF, دستگاه مکمل خط تولید, لیزینگ ماشین آلات صنعتی, مشاوره خرید تجهیزات صنعتی, تجهیز خط تولید">
+
+    <meta name="author" content="ماشین پلاس">
+    <meta name="publisher" content="ماشین پلاس">
+    <meta name="enamad" content="76252739"/>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"/>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'system-ui', 'sans-serif']
+                    },
+                    colors: {
+                        background: '#f5f6f9',
+                        foreground: '#1d2433',
+                        surface: '#ffffff',
+                        'surface-muted': '#eef0f5',
+                        card: '#ffffff',
+                        primary: {
+                            DEFAULT: '#1f4e79',
+                            dark: '#173a5e',
+                            foreground: '#ffffff'
+                        },
+                        secondary: {
+                            DEFAULT: '#2b3140',
+                            foreground: '#ffffff'
+                        },
+                        muted: {
+                            DEFAULT: '#eef0f5',
+                            foreground: '#5b6478'
+                        },
+                        accent: {
+                            DEFAULT: '#d98e04',
+                            foreground: '#1d2433'
+                        },
+                        border: '#e2e5ec',
+                    },
+                    boxShadow: {
+                        soft: '0 1px 2px rgba(20,35,60,.04), 0 4px 16px rgba(20,35,60,.06)',
+                        elevated: '0 4px 12px rgba(20,35,60,.08), 0 16px 40px rgba(20,35,60,.10)',
+                        glow: '0 8px 32px rgba(31,78,121,.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f5f6f9;
+            color: #1d2433;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        .error-page {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 20px;
+            background: #f5f6f9;
+            direction: rtl;
+        }
+
+        .error-content {
+            width: 100%;
+            max-width: 660px;
+            text-align: center;
+        }
+
+        .error-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 22px;
+            color: #1f4e79;
+        }
+
+        .error-icon svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .error-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #5b6478;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .error-label::before,
+        .error-label::after {
+            content: "";
+            width: 26px;
+            height: 2px;
+            background: #d98e04;
+        }
+
+        .error-number {
+            direction: ltr;
+            font-size: clamp(110px, 20vw, 180px);
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -8px;
+            color: #1f4e79;
+        }
+
+        .error-number span {
+            color: #d98e04;
+        }
+
+        .error-divider {
+            width: 100%;
+            max-width: 380px;
+            height: 5px;
+            background: #e2e5ec;
+            margin: 26px auto;
+            position: relative;
+        }
+
+        .error-divider::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 24%;
+            height: 5px;
+            background: #d98e04;
+        }
+
+        .error-title {
+            color: #1d2433;
+            font-size: clamp(20px, 4vw, 28px);
+            font-weight: 800;
+            line-height: 1.8;
+            margin: 0 0 12px;
+        }
+
+        .error-description {
+            max-width: 480px;
+            margin: 0 auto;
+            color: #5b6478;
+            font-size: 13px;
+            line-height: 2.2;
+        }
+
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .error-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 22px;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background-color .2s, border-color .2s;
+        }
+
+        .error-button-primary {
+            color: #ffffff;
+            background: #1f4e79;
+            border: 1px solid #1f4e79;
+        }
+
+        .error-button-primary:hover {
+            background: #173a5e;
+            border-color: #173a5e;
+            color: #ffffff;
+        }
+
+        .error-button-secondary {
+            color: #2b3140;
+            background: transparent;
+            border: 1px solid #cfd5df;
+        }
+
+        .error-button-secondary:hover {
+            background: #eef0f5;
+            color: #1d2433;
+        }
+
+        .error-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 36px;
+            color: #8b95a5;
+            font-size: 10px;
+            direction: ltr;
+        }
+
+        .error-code::before,
+        .error-code::after {
+            content: "";
+            width: 30px;
+            height: 1px;
+            background: #d6dbe3;
+        }
+
+        /* Tablet */
+        @media (max-width: 767px) {
+
+            .desktop-nav {
+                display: none !important;
+            }
+
+            .error-page {
+                padding: 55px 24px;
+            }
+
+            .error-content {
+                max-width: 580px;
+            }
+
+            .error-number {
+                font-size: clamp(110px, 22vw, 160px);
+            }
+
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+
+            .error-header-inner {
+                padding: 10px 14px;
+                gap: 8px;
+            }
+
+            .error-brand {
+                gap: 7px;
+                flex-shrink: 0;
+            }
+
+            .error-brand-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+            }
+
+            .error-brand-title {
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .error-header-actions {
+                gap: 9px;
+                flex-shrink: 0;
+            }
+
+            .error-consultation {
+                padding: 8px 10px;
+                gap: 5px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .error-consultation svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .error-cart-icon {
+                width: 27px;
+                height: 27px;
+            }
+
+            .error-page {
+                min-height: 65vh;
+                padding: 45px 16px;
+            }
+
+            .error-content {
+                width: 100%;
+            }
+
+            .error-icon {
+                width: 54px;
+                height: 54px;
+                margin-bottom: 18px;
+            }
+
+            .error-label {
+                font-size: 11px;
+                margin-bottom: 12px;
+            }
+
+            .error-number {
+                font-size: clamp(100px, 27vw, 130px);
+                letter-spacing: -5px;
+            }
+
+            .error-divider {
+                max-width: 280px;
+                margin: 22px auto;
+            }
+
+            .error-title {
+                font-size: 20px;
+                line-height: 1.8;
+            }
+
+            .error-description {
+                font-size: 12px;
+                line-height: 2.1;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 24px;
+            }
+
+            .error-button {
+                width: 100%;
+                min-height: 46px;
+                font-size: 12px;
+            }
+
+            .error-code {
+                margin-top: 28px;
+            }
+
+            footer {
+                margin-top: 20px !important;
+                padding-top: 22px !important;
+                padding-bottom: 22px !important;
+            }
+
+        }
+
+        /* Small Mobile */
+        @media (max-width: 360px) {
+
+            .error-header-inner {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+
+            .error-brand-title {
+                font-size: 12px;
+            }
+
+            .error-header-actions {
+                gap: 7px;
+            }
+
+            .error-consultation {
+                padding: 8px;
+                font-size: 10px;
+            }
+
+            .error-number {
+                font-size: 100px;
+            }
+
+            .error-title {
+                font-size: 18px;
+            }
+
+            .error-label {
+                font-size: 10px;
+                gap: 7px;
+            }
+
+            .error-label::before,
+            .error-label::after {
+                width: 18px;
+            }
+
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-background text-foreground">
+
+<header class="error-header sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur-md">
+    <div class="error-header-inner mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+
+        <a href="{% url 'core:home' %}" class="error-brand flex items-center gap-2">
+            <span class="error-brand-icon grid h-8 w-8 place-items-center rounded-lg bg-primary text-white font-extrabold">
+                م+
+            </span>
+            <span class="error-brand-title font-extrabold text-foreground">ماشین پلاس</span>
+        </a>
+
+        <nav class="desktop-nav hidden items-center gap-6 text-sm text-[#5b6478] md:flex">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="font-semibold text-foreground">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="transition-colors hover:text-foreground">مجله</a>
+            <a href="{% url 'core:contact-us' %}" class="transition-colors hover:text-foreground">تماس با ما</a>
+        </nav>
+
+        <div class="error-header-actions flex items-center gap-4">
+
+            <a href="{% url 'core:inquiry' %}"
+               aria-label="مشاوره رایگان"
+               class="error-consultation inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
+
+                <svg viewBox="0 0 24 24"
+                     class="h-4 w-4 shrink-0"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2.5"
+                     stroke-linecap="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+
+                <span>مشاوره رایگان</span>
+            </a>
+
+            <a href="{% url 'cart:cart_detail' %}"
+               aria-label="سبد خرید"
+               class="cart-header-icon relative inline-flex shrink-0 items-center justify-center no-underline">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 32 32"
+                     fill="none"
+                     aria-hidden="true"
+                     class="error-cart-icon w-8 h-8">
+
+                    <path d="M2.5 4H5L8.2 7.5"
+                          stroke="#D69B35" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <path d="M8.2 7.5H29L26.2 19.5H11L8.2 7.5Z"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <path d="M14 10.5L15 17M20 10.5L20 17M25 10.5L24 17"
+                          stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round"/>
+
+                    <circle cx="13" cy="25" r="1.8" fill="#D69B35"/>
+                    <circle cx="24" cy="25" r="1.8" fill="#D69B35"/>
+                </svg>
+
+                <span class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
+                    {{ cart_items_count|default:0|persian_numbers }}
+                </span>
+            </a>
+
+        </div>
+    </div>
+</header>
+
+<main>
+    {% block error_content %}
+    {% endblock %}
+</main>
+
+<footer class="mt-10 border-t border-border bg-white py-8">
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-[#5b6478] sm:px-6 lg:px-8">
+        © ۲۰۲۶ ماشین پلاس — تمامی حقوق محفوظ است.
+    </div>
+</footer>
+
+</body>
+</html>

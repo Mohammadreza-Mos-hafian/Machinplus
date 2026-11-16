@@ -1,0 +1,59 @@
+{% extends "base_error.html" %}
+
+{% block title %}صفحه پیدا نشد | ماشین پلاس{% endblock %}
+
+{% block error_content %}
+
+    <section class="error-page">
+        <div class="error-content">
+
+            <div class="error-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6"/>
+                    <path d="M9.5 13a2.5 2.5 0 1 1 4.2 1.8c-1 .9-1.7 1.2-1.7 2.7"/>
+                    <path d="M12 20h.01"/>
+                </svg>
+            </div>
+
+            <div class="error-label">
+                خطای دسترسی به صفحه
+            </div>
+
+            <div class="error-number">
+                4<span>0</span>4
+            </div>
+
+            <div class="error-divider"></div>
+
+            <h1 class="error-title">
+                صفحه مورد نظر پیدا نشد!
+            </h1>
+
+            <p class="error-description">
+                آدرسی که وارد کرده‌اید معتبر نیست یا صفحه مورد نظر دیگر در دسترس نیست.
+                می‌توانید به صفحه اصلی بازگردید و مسیر خود را دوباره انتخاب کنید.
+            </p>
+
+            <div class="error-actions">
+
+                <a href="{% url 'core:home' %}"
+                   class="error-button error-button-primary">
+                    بازگشت به صفحه اصلی
+                </a>
+
+                <a href="{% url 'shop:product_list' %}"
+                   class="error-button error-button-secondary">
+                    مشاهده محصولات
+                </a>
+
+            </div>
+
+            <div class="error-code">
+                ERROR CODE : MP-404
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}
