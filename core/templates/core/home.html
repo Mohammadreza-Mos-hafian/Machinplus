@@ -1,4 +1,4 @@
-{% load static %}{%load humanize%}{%load number_filters%}
+{% load static %}{% load humanize %}{% load number_filters %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -323,13 +323,14 @@
                         <div class="p-6">
                             <h3 class="mt-2 text-xl font-extrabold text-foreground">{{ product.title }}</h3>
                             <span class="text-xs font-bold text-accent">{{ product.summary|truncatechars:15 }}</span>
-                            {%if not product.price_on_request%}
+                            {% if not product.price_on_request %}
                                 <a href="{% url 'shop:product_detail' product.slug %}"
-                                class="text-xs font-bold text-accent"> | {{product.price | intcomma:False | persian_numbers}} تومان</a>
-                            {%else%}
+                                   class="text-xs font-bold text-accent">
+                                    | {{ product.price | intcomma:False | persian_numbers }} تومان</a>
+                            {% else %}
                                 <a href="{% url 'shop:product_detail' product.slug %}"
-                                class="text-xs font-bold text-accent"> | قیمت: استعلام قیمت</a>
-                            {%endif%}
+                                   class="text-xs font-bold text-accent"> | قیمت: استعلام قیمت</a>
+                            {% endif %}
                             <a href="{% url 'shop:product_detail' product.slug %}"
                                style="margin-top: 10px;display: block"
                                class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مشاهده
@@ -538,11 +539,13 @@
         <div class="mx-auto max-w-3xl px-4 pb-4 pt-3 sm:px-6">
             <div id="quick-prompts" class="mb-3 hide flex-wrap gap-2"></div>
             <form id="chat-form"
+                  method="post"
+                  action="{% url 'core:chatbot' %}"
                   class="rounded-2xl border border-border bg-white shadow-soft focus-within:border-primary/40 focus-within:shadow-elevated">
+                {% csrf_token %}
 
-
-        <textarea id="chat-input" rows="1" placeholder="نیاز خود را بنویسید... مثلاً: خرید دستگاه برش لیزر"
-                  class="chat-input block max-h-40 min-h-[52px] w-full resize-none bg-transparent px-4 py-3.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"></textarea>
+                <textarea id="chat-input" rows="1" placeholder="نیاز خود را بنویسید... مثلاً: خرید دستگاه برش لیزر"
+                          class="chat-input block max-h-40 min-h-[52px] w-full resize-none bg-transparent px-4 py-3.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"></textarea>
 
 
                 <div class="flex items-center justify-between gap-2 border-t border-border/70 px-2.5 py-2">
@@ -749,8 +752,6 @@
         if (!msg) return;
 
         const history = saveMessageToHistory('user', msg);
-        messagesEl.insertAdjacentHTML('beforeend', bubble('user', escapeHtml(msg), nowFa()));
-        scrollBottom();
 
         emptyEl.classList.add('hide');
         quickEl.classList.remove('hide');
@@ -765,17 +766,30 @@
         scrollBottom();
 
         try {
-            const response = await fetch('/chat/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: msg,
-                    lang_code: 'fa',
-                    history: history
-                })
-            });
+            const csrfToken = document.querySelector(
+                '#chat-form input[name="csrfmiddlewaretoken"]'
+            ).value;
+
+            const response = await fetch(
+                document.getElementById('chat-form').action,
+                {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        message: msg,
+                        lang_code: 'fa',
+                        history: history,
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
 
             const data = await response.json();
 

@@ -1,7 +1,8 @@
 import json
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.http import require_POST
 
 from blog.models import Magazine
 from core.models import ChatMessage, InquiryForm
@@ -59,7 +60,8 @@ def terms(request):
     return render(request, 'core/terms.html')
 
 
-@csrf_exempt
+@require_POST
+@csrf_protect
 def chatbot_view(request):
     if request.method == "POST":
 
@@ -91,7 +93,7 @@ def chatbot_view(request):
                     "reply": gpt_response[0],
                     # "results": results
                 },
-                status=200
+                status=503
             )
 
         except Exception as e:
