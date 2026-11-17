@@ -81,8 +81,23 @@ class MagazineDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        article = self.object
+
         context["article_json"] = self.build_article_data()
         context["related_articles_json"] = self.build_related_articles(limit=3)
+
+        context["seo_title"] = article.title
+        context["seo_description"] = article.summary or article.title
+        context["seo_type"] = "article"
+        context["seo_url"] = self.request.build_absolute_uri()
+
+        context["seo_image"] = (
+            self.request.build_absolute_uri(article.cover_image.url)
+            if article.cover_image
+            else ""
+        )
+
         return context
 
     def build_article_data(self):

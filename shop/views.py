@@ -195,6 +195,18 @@ class ProductDetailView(DetailView):
         context["related_json"] = self.build_related_products()
         context["product_structured_data"] = self.build_product_structured_data()
 
+        # SEO - Open Graph & Twitter Card
+        context["seo_title"] = product.title
+        context["seo_description"] = product.summary or product.title
+        context["seo_type"] = "website"
+        context["seo_url"] = self.request.build_absolute_uri()
+
+        context["seo_image"] = (
+            self.request.build_absolute_uri(product.main_image.url)
+            if product.main_image
+            else ""
+        )
+
         return context
 
     def build_product_data(self):
