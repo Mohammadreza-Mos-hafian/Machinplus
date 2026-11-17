@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load seo_tags %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -27,6 +27,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
+
+    <link rel="canonical" href="{% canonical_url %}">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {

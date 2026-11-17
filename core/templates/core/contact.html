@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load seo_tags %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -17,6 +17,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'site/medias/32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'site/medias/16x16.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
+
+    <link rel="canonical" href="{% canonical_url %}">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

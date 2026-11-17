@@ -1,9 +1,11 @@
-{% load static %}{% load number_filters %}
+{% load static %}{% load number_filters %}{% load seo_tags %}
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
 <head>
+    <link rel="canonical" href="{% canonical_url %}">
+
     <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-N9PLF9XR"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
