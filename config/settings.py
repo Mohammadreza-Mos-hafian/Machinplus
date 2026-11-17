@@ -14,7 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
-from django.utils.csp import CSP
+from csp.constants import NONE, SELF, UNSAFE_INLINE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "ckeditor",
     "ckeditor_uploader",
     "axes",
+    "csp",
 
     # Manual apps
     "account",
@@ -69,6 +70,7 @@ MIDDLEWARE = [
     "axes.middleware.AxesMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -215,7 +217,7 @@ AXES_LOCKOUT_PARAMETERS = ['ip_address']
 AXES_RESET_ON_SUCCESS = True
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = False
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -224,14 +226,16 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
 
-    SECURE_CSP_REPORT_ONLY = {
-        "default-src": [CSP.SELF],
-        "base-uri": [CSP.SELF],
-        "object-src": [CSP.NONE],
-        "frame-ancestors": [CSP.NONE],
-        "form-action": [CSP.SELF],
-        "img-src": [CSP.SELF, "data:"],
-        "font-src": [CSP.SELF, "data:"],
-        "style-src": [CSP.SELF, CSP.UNSAFE_INLINE],
-        "script-src": [CSP.SELF],
+    CONTENT_SECURITY_POLICY_REPORT_ONLY = {
+        "DIRECTIVES": {
+            "default-src": [SELF],
+            "base-uri": [SELF],
+            "object-src": [NONE],
+            "frame-ancestors": [NONE],
+            "form-action": [SELF],
+            "img-src": [SELF, "data:"],
+            "font-src": [SELF, "data:"],
+            "style-src": [SELF, UNSAFE_INLINE],
+            "script-src": [SELF],
+        },
     }

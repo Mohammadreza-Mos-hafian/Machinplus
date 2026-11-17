@@ -93,12 +93,12 @@ def chatbot_view(request):
                     "reply": gpt_response[0],
                     # "results": results
                 },
-                status=503
+                status=200
             )
 
         except Exception as e:
             print(e)
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=503)
 
     messages = None
     if request.user.is_authenticated:
