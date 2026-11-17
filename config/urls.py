@@ -14,11 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls.py import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls.py'))
 """
-from django.conf.urls import handler400
 from django.contrib import admin
 from django.conf.urls.static import static
 from config import settings
 from django.urls import path, include, register_converter
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import (
+    StaticViewSitemap,
+    MagazineSitemap,
+    ProductSitemap,
+)
 
 from django.urls.converters import StringConverter
 from urllib.parse import unquote
@@ -42,6 +47,21 @@ urlpatterns = [
     path("cart/", include("cart.urls")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path("management-panel/", admin.site.urls),
+]
+
+sitemaps = {
+    "static": StaticViewSitemap,
+    "articles": MagazineSitemap,
+    "products": ProductSitemap,
+}
+
+urlpatterns += [
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ]
 
 if settings.DEBUG:

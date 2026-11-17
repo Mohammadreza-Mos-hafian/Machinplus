@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home, contact_view, chatbot_view, inquiry_view, terms, catalog_view
+from .views import home, contact_view, chatbot_view, inquiry_view, terms, catalog_view, robots_txt
 
 app_name = "core"
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     path("contact-us/", contact_view, name="contact-us"),
     path("terms/", terms, name="terms"),
     path("chat/", chatbot_view, name="chatbot"),
+    path("robots.txt", robots_txt, name="robots_txt"),
 ]

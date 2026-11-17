@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
@@ -133,3 +133,14 @@ def custom_500(request):
             "page_title": "خطای داخلی سرور",
         },
     )
+
+
+def robots_txt(request):
+    content = """User-agent: *
+Disallow: /management-panel/
+Disallow: /cart/
+Disallow: /ckeditor/
+
+Sitemap: https://machinplus.ir/sitemap.xml
+"""
+    return HttpResponse(content, content_type="text/plain")
