@@ -54,7 +54,7 @@ class MagazineListView(ListView):
         for art in articles:
             data.append({
                 "id": art.id,
-                "slug": art.title.replace(" ", "-"),
+                "slug": art.slug,
                 "title": art.title,
                 "excerpt": art.summary or "",
                 "image": art.cover_image.url if art.cover_image else "",
@@ -89,7 +89,7 @@ class MagazineDetailView(DetailView):
         art = self.object
         return {
             "id": art.id,
-            "slug": art.title.replace(" ", "-"),
+            "slug": art.slug,
             "title": art.title,
             "excerpt": art.summary or "",
             "image": art.cover_image.url if art.cover_image else "",
@@ -134,7 +134,7 @@ class MagazineDetailView(DetailView):
             data.append(
                 {
                     "id": item.id,
-                    "slug": item.title.replace(" ", "-"),
+                    "slug": item.slug,
                     "title": item.title,
                     "excerpt": item.summary or "",
                     "image": item.cover_image.url if item.cover_image else "",

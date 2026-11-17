@@ -2,7 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 
 from account.models import User
-from blog.managers import PublishedArticleManager
+from django.utils.text import slugify
 
 
 # Create your models here.
@@ -44,6 +44,16 @@ class Magazine(models.Model):
     )
 
     title = models.CharField(max_length=255, verbose_name="عنوان مقاله")
+
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        allow_unicode=True,
+        null=True,
+        blank=True,
+        verbose_name="آدرس اختصاصی",
+    )
+
     category = models.ForeignKey(
         Category,
         on_delete=models.PROTECT,
@@ -96,6 +106,20 @@ class Magazine(models.Model):
         verbose_name = "مقاله"
         verbose_name_plural = "مقالات"
         ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title, allow_unicode=True)
+            slug = base_slug or "product"
+            counter = 2
+
+            while Magazine.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug or 'product'}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

@@ -362,7 +362,7 @@
                         <div class="p-6"><h3
                                 class="text-lg font-extrabold leading-8 text-foreground">{{ article.title }}</h3>
                             <p class="mt-2 text-sm leading-7 text-muted-foreground">{{ article.summary }}</p>
-                            <a href="{% url 'blog:detail' article.id article.title %}"
+                            <a href="{% url 'blog:detail' article.slug %}"
                                style="margin-top: 10px;display: block"
                                class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5">مطالعه
                                 مقاله</a>

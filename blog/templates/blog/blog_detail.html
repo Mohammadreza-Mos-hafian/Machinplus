@@ -317,12 +317,12 @@
     <span aria-hidden="true">•</span><span>${p.author}</span></div>`;
 
         const card = (p) => `<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated">
-    <a href="/blog/${p.id}/${p.slug}" class="relative block overflow-hidden">
+    <a href="/blog/${p.slug}" class="relative block overflow-hidden">
       <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105" />
       <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">${catLabel(p.category)}</span>
     </a>
     <div class="flex flex-1 flex-col p-5">
-      <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="/blog/${p.id}/${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
+      <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="/blog/${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
       <p class="mt-2 line-clamp-3 flex-1 text-sm leading-7 text-muted-foreground">${p.excerpt}</p>
       ${meta(p, "mt-4 border-t border-border pt-4")}
     </div></article>`;

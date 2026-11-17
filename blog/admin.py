@@ -40,7 +40,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("اطلاعات اصلی", {
-            "fields": ("title", "category", "tags", "writer", "cover_image", "summary")
+            "fields": ("title", "slug", "category", "tags", "writer", "cover_image", "summary")
         }),
         ("محتوای اصلی مقاله", {
             "fields": ("body",)
@@ -54,6 +54,9 @@ class ArticleAdmin(admin.ModelAdmin):
         }),
     )
     readonly_fields = ("created_at", "updated_at")
+    prepopulated_fields = {
+        "slug": ("title",)
+    }
 
     @admin.display(description="تصویر کاور")
     def cover_preview(self, obj):
@@ -62,7 +65,11 @@ class ArticleAdmin(admin.ModelAdmin):
                 '<img src="{}" style="width: 50px; height: 35px; object-fit: cover; border-radius: 4px;" />',
                 obj.cover_image.url,
             )
-        return format_html('<span style="color: #999;">بدون تصویر</span>')
+        return format_html(
+            '<span style="color: {};">{}</span>',
+            '#999',
+            'بدون تصویر',
+        )
 
     @admin.display(description="وضعیت", ordering="status")
     def status_badge(self, obj):

@@ -40,10 +40,7 @@ class MagazineSitemap(Sitemap):
     def location(self, obj):
         return reverse(
             "blog:detail",
-            kwargs={
-                "pk": obj.pk,
-                "title": obj.title,
-            },
+            kwargs={"slug": obj.slug},
         )
 
 
