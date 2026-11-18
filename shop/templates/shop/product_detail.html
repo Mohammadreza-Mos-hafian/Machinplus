@@ -19,6 +19,16 @@
     <link rel="canonical" href="{% canonical_url %}">
     {% include "includes/social_meta.html" %}
 
+    {% include 'includes/organization_schema.html' %}
+
+    <script type="application/ld+json">
+    {{ product_structured_data }}
+</script>
+
+    <script type="application/ld+json">
+    {{ product_breadcrumb_json_ld }}
+</script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

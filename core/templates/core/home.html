@@ -1,4 +1,8 @@
-{% load static %}{% load humanize %}{% load number_filters %}{% load seo_tags %}
+{% load static %}
+{% load humanize %}
+{% load number_filters %}
+{% load seo_tags %}
+
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -42,6 +46,9 @@
 
     <link rel="canonical" href="{% canonical_url %}">
     {% include "includes/social_meta.html" %}
+
+    {% include "includes/organization_schema.html" %}
+    {% include "includes/website_schema.html" %}
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -135,7 +142,8 @@
                 </div>
                 <div class="leading-tight">
                     <div class="text-base font-extrabold text-white">ماشین پلاس</div>
-                    <div class="text-[10px] font-medium text-white/70">تأمین ماشین‌آلات صنعتی و راه‌اندازی خطوط تولید</div>
+                    <div class="text-[10px] font-medium text-white/70">تأمین ماشین‌آلات صنعتی و راه‌اندازی خطوط تولید
+                    </div>
                 </div>
             </div>
             <nav class="hidden items-center gap-7 text-sm text-white/85 md:flex">
@@ -495,7 +503,9 @@
                 </div>
                 <div class="leading-tight">
                     <div class="text-base font-extrabold text-foreground">ماشین پلاس</div>
-                    <div class="text-[10px] font-medium text-muted-foreground">تأمین ماشین‌آلات صنعتی و راه‌اندازی خطوط تولید</div>
+                    <div class="text-[10px] font-medium text-muted-foreground">تأمین ماشین‌آلات صنعتی و راه‌اندازی خطوط
+                        تولید
+                    </div>
                 </div>
             </a>
             <div class="flex items-center gap-2">

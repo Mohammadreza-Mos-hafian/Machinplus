@@ -1,4 +1,4 @@
-{% load static %}{% load seo_tags %}
+{% load static %}{% load seo_tags %}{% load json_ld %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -21,6 +21,19 @@
     <link rel="canonical" href="{% canonical_url %}">
     {% include "includes/social_meta.html" %}
 
+    {% include 'includes/organization_schema.html' %}
+
+    {% if article_json_ld %}
+        <script type="application/ld+json">
+            {{ article_json_ld|json_ld }}
+        </script>
+    {% endif %}
+
+    {% if breadcrumb_json_ld %}
+        <script type="application/ld+json">
+            {{ breadcrumb_json_ld|json_ld }}
+        </script>
+    {% endif %}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

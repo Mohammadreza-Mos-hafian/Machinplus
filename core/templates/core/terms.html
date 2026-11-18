@@ -19,7 +19,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
 
     <link rel="canonical" href="{% canonical_url %}">
-    {% include "includes/social_meta.html" %}
+
+    {% include "includes/organization_schema.html" %}
+    {% include "includes/website_schema.html" %}
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

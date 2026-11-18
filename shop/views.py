@@ -1,17 +1,76 @@
 import json
+from urllib.parse import urljoin, urlencode
 
-from urllib.parse import unquote
-from django.shortcuts import get_object_or_404
-from django.db.models import Count
+from django.conf import settings
+from django.db.models import Count, Prefetch
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.views.generic import ListView, DetailView
 
-from django.utils.safestring import mark_safe
-from shop.models import Product
-
-from utils.functions import get_user_cart
+from shop.models import Product, Seller
+from utils.functions import get_user_cart, toman_to_rial
 
 
-class ProductListView(ListView):
+class ProductStructuredDataMixin:
+    """Shared helpers for product URLs and structured data."""
+
+    def get_site_url(self):
+        if settings.DEBUG:
+            return self.request.build_absolute_uri("/").rstrip("/")
+
+        return "https://machinplus.ir"
+
+    def get_product_url(self, product):
+        product_path = reverse(
+            "shop:product_detail",
+            kwargs={"slug": product.slug},
+        )
+
+        return urljoin(
+            f"{self.get_site_url()}/",
+            product_path.lstrip("/"),
+        )
+
+    def get_availability(self, product):
+        if product.is_available and product.stock > 0:
+            return "https://schema.org/InStock"
+
+        return "https://schema.org/OutOfStock"
+
+    def build_offer_data(self, product):
+        """
+        Build an Offer only when the product has a specified price.
+        Product prices are stored in Toman and converted to Rial.
+        """
+
+        if product.price_on_request or product.price is None:
+            return None
+
+        return {
+            "@type": "Offer",
+            "url": self.get_product_url(product),
+            "price": toman_to_rial(product.price),
+            "priceCurrency": "IRR",
+            "availability": self.get_availability(product),
+        }
+
+    @staticmethod
+    def serialize_json_ld(data):
+        """Safely serialize JSON-LD for an HTML script element."""
+
+        json_data = json.dumps(data, ensure_ascii=False)
+
+        json_data = (
+            json_data
+            .replace("<", "\\u003C")
+            .replace(">", "\\u003E")
+            .replace("&", "\\u0026")
+        )
+
+        return mark_safe(json_data)
+
+
+class ProductListView(ProductStructuredDataMixin, ListView):
     """Paginated list of active products for the shop frontend."""
 
     model = Product
@@ -19,18 +78,7 @@ class ProductListView(ListView):
     context_object_name = "products"
     paginate_by = 12
 
-    def get_object(self, queryset=None):
-        queryset = queryset or self.get_queryset()
-
-        slug = unquote(self.kwargs[self.slug_url_kwarg])
-
-        return get_object_or_404(
-            queryset,
-            **{self.slug_field: slug}
-        )
-
     def get_queryset(self):
-        """Return active products with related data loaded efficiently."""
         return (
             super()
             .get_queryset()
@@ -42,112 +90,221 @@ class ProductListView(ListView):
             .prefetch_related(
                 "gallery_images",
                 "features",
-                "sellers",
+                Prefetch(
+                    "sellers",
+                    queryset=Seller.objects.filter(is_active=True),
+                ),
             )
+        )
+
+    def get_product_list_url(self, page_obj):
+        """
+        Return the canonical URL of the current pagination page.
+        Page 1 uses the base URL; subsequent pages include ?page=N.
+        """
+
+        path = self.request.path
+
+        if page_obj and page_obj.number > 1:
+            path = f"{path}?{urlencode({'page': page_obj.number})}"
+
+        return urljoin(
+            f"{self.get_site_url()}/",
+            path.lstrip("/"),
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         cart = get_user_cart(self.request)
+        products = context["products"]
+        page_obj = context["page_obj"]
 
-        # فقط محصولات صفحه جاری به JavaScript ارسال می‌شوند.
         context["products_json"] = self.build_products_data(
-            context["products"],
+            products,
             cart,
         )
 
-        # تعداد آیتم‌های سبد خرید، نه مجموع تعداد هر محصول
-        context["cart_items_count"] = cart.items.count() if cart else 0
+        context["cart_items_count"] = (
+            cart.items.count() if cart else 0
+        )
+
+        product_list_url = self.get_product_list_url(page_obj)
+
+        context["seo_title"] = (
+            "فروشگاه ماشین‌آلات صنعتی | ماشین پلاس"
+        )
+
+        context["seo_description"] = (
+            "مرور و خرید ماشین‌آلات صنعتی، قطعات یدکی و تجهیزات تولید "
+            "از تأمین‌کنندگان معتبر در ماشین پلاس."
+        )
+
+        context["seo_type"] = "website"
+        context["seo_url"] = product_list_url
+
+        collection_data = self.build_collection_json_ld(
+            products=products,
+            page_obj=page_obj,
+            product_list_url=product_list_url,
+        )
+
+        context["product_collection_json_ld"] = (
+            self.serialize_json_ld(collection_data)
+        )
 
         return context
 
     def build_products_data(self, products, cart):
-        """
-        Build product data for the JavaScript frontend.
-        Only products belonging to the current pagination page are processed.
-        """
+        """Build frontend data for products on the current page."""
 
         data = []
 
         for product in products:
             seller = product.sellers.first()
 
-            data.append(
-                {
-                    "id": product.pk,
-                    "title": product.title,
-                    "slug": product.slug,
-                    "desc": product.summary,
-                    "image": (
-                        product.main_image.url
-                        if product.main_image
-                        else ""
-                    ),
-                    "category": getattr(product, "category", ""),
-                    "location": getattr(product, "location", ""),
-                    "condition": "new",
-                    "price": getattr(product, "price", 0),
-                    "old_price": getattr(product, "old_price", 0),
-                    "price_on_request": getattr(
-                        product,
-                        "price_on_request",
-                        None,
-                    ),
-                    "stock": getattr(product, "stock", 0),
-                    "is_available": getattr(
-                        product,
-                        "is_available",
-                        None,
-                    ),
-                    "brand": getattr(product, "brand", ""),
-                    "gallery": [
-                        img.image.url
-                        for img in product.gallery_images.all()
-                        if img.image
-                    ],
-                    "specs": [
-                        {
-                            "label": feature.name,
-                            "value": feature.value,
-                        }
-                        for feature in product.features.all()[:2]
-                    ],
-                    "seller": {
-                        "company": (
-                            getattr(seller, "name", "")
-                            if seller
-                            else ""
-                        ),
-                        "location": (
-                            getattr(seller, "location", "")
-                            if seller
-                            else ""
-                        ),
-                        "verified": (
-                            getattr(seller, "verified", False)
-                            if seller
-                            else False
-                        ),
-                        "rating": (
-                            getattr(seller, "rating", "")
-                            if seller
-                            else ""
-                        ),
-                    },
-                    "is_in_cart": (
-                        product.cart_items.filter(cart=cart).exists()
-                        if cart
-                        else False
-                    ),
-                }
-            )
+            data.append({
+                "id": product.pk,
+                "title": product.title,
+                "slug": product.slug,
+                "desc": product.summary,
+                "image": (
+                    product.main_image.url
+                    if product.main_image
+                    else ""
+                ),
+
+                # These fields are retained for frontend compatibility.
+                # They remain empty because Product has no such fields.
+                "category": "",
+                "location": "",
+                "condition": "",
+                "brand": "",
+
+                "price": product.price,
+                "old_price": product.old_price,
+                "price_on_request": (
+                        product.price_on_request
+                        or product.price is None
+                ),
+                "stock": product.stock,
+                "is_available": product.is_available,
+
+                "gallery": [
+                    image.image.url
+                    for image in product.gallery_images.all()
+                    if image.image
+                ],
+
+                "specs": [
+                    {
+                        "label": feature.name or "",
+                        "value": feature.value,
+                    }
+                    for feature in product.features.all()[:2]
+                ],
+
+                "seller": {
+                    "company": seller.name if seller else "",
+                    "phone": seller.phone if seller else "",
+                    "website": seller.website if seller else "",
+                    "location": "",
+                    "verified": None,
+                    "rating": "",
+                },
+
+                "is_in_cart": (
+                    product.cart_items.filter(cart=cart).exists()
+                    if cart
+                    else False
+                ),
+            })
 
         return data
 
+    def build_collection_json_ld(
+            self,
+            products,
+            page_obj,
+            product_list_url,
+    ):
+        site_url = self.get_site_url()
 
-class ProductDetailView(DetailView):
-    """Detail page of a single active product with all related data."""
+        item_list = []
+
+        start_position = (
+            page_obj.start_index()
+            if page_obj
+            else 1
+        )
+
+        for position, product in enumerate(
+                products,
+                start=start_position,
+        ):
+            product_url = self.get_product_url(product)
+
+            product_data = {
+                "@type": "Product",
+                "@id": f"{product_url}#product",
+                "name": product.title,
+                "url": product_url,
+            }
+
+            if product.sku:
+                product_data["sku"] = product.sku
+
+            if product.summary:
+                product_data["description"] = product.summary
+
+            if product.main_image:
+                product_data["image"] = self.request.build_absolute_uri(
+                    product.main_image.url
+                )
+
+            offer_data = self.build_offer_data(product)
+
+            if offer_data:
+                product_data["offers"] = offer_data
+
+            item_list.append({
+                "@type": "ListItem",
+                "position": position,
+                "item": product_data,
+            })
+
+        return {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "@id": f"{product_list_url}#collection",
+            "url": product_list_url,
+            "name": "فروشگاه ماشین‌آلات صنعتی | ماشین پلاس",
+            "description": (
+                "مرور ماشین‌آلات صنعتی، قطعات یدکی و تجهیزات تولید "
+                "در فروشگاه ماشین پلاس."
+            ),
+            "inLanguage": "fa-IR",
+            "isPartOf": {
+                "@id": f"{site_url}/#website",
+            },
+            "publisher": {
+                "@id": f"{site_url}/#organization",
+            },
+            "mainEntity": {
+                "@type": "ItemList",
+                "@id": f"{product_list_url}#product-list",
+                "numberOfItems": (
+                    page_obj.paginator.count
+                    if page_obj
+                    else len(item_list)
+                ),
+                "itemListElement": item_list,
+            },
+        }
+
+
+class ProductDetailView(ProductStructuredDataMixin, DetailView):
+    """Detail page of a single active product with related data."""
 
     model = Product
     template_name = "shop/product_detail.html"
@@ -157,31 +314,37 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = "slug"
 
     def get_queryset(self):
-        """Load gallery, features and sellers in a few optimized queries."""
         return (
             super()
             .get_queryset()
             .filter(is_active=True)
-            .prefetch_related("gallery_images", "features", "sellers")
+            .prefetch_related(
+                "gallery_images",
+                "features",
+                Prefetch(
+                    "sellers",
+                    queryset=Seller.objects.filter(is_active=True),
+                ),
+            )
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        product = self.object
         cart = get_user_cart(self.request)
 
         context["is_in_cart"] = (
-            self.object.cart_items.filter(cart=cart).exists()
+            product.cart_items.filter(cart=cart).exists()
             if cart
             else False
         )
 
-        product = self.object
-
         discount_percentage = 0
 
         if (
-                product.price
-                and product.old_price
+                product.price is not None
+                and product.old_price is not None
                 and product.old_price > product.price
         ):
             discount_percentage = round(
@@ -190,16 +353,27 @@ class ProductDetailView(DetailView):
             )
 
         context["discount_percentage"] = discount_percentage
-        context["cart_items_count"] = cart.items.count() if cart else 0
+        context["cart_items_count"] = (
+            cart.items.count() if cart else 0
+        )
+
         context["product_json"] = self.build_product_data()
         context["related_json"] = self.build_related_products()
-        context["product_structured_data"] = self.build_product_structured_data()
 
-        # SEO - Open Graph & Twitter Card
+        context["product_structured_data"] = (
+            self.build_product_structured_data()
+        )
+        context["product_breadcrumb_json_ld"] = self.build_breadcrumb_json_ld()
+
+        product_url = self.get_product_url(product)
+
+        # SEO metadata
         context["seo_title"] = product.title
-        context["seo_description"] = product.summary or product.title
+        context["seo_description"] = (
+                product.summary or product.title
+        )
         context["seo_type"] = "website"
-        context["seo_url"] = self.request.build_absolute_uri()
+        context["seo_url"] = product_url
 
         context["seo_image"] = (
             self.request.build_absolute_uri(product.main_image.url)
@@ -214,43 +388,55 @@ class ProductDetailView(DetailView):
         seller = product.sellers.first()
         cart = get_user_cart(self.request)
 
-        price = product.price
-        price_on_request = bool(product.price_on_request) or price is None
-
-        data = {
+        return {
             "id": product.pk,
             "slug": product.slug,
             "title": product.title,
             "desc": product.summary,
-            "image": product.main_image.url if product.main_image else "",
-            "category": getattr(product, "category", ""),
-            "location": getattr(product, "location", ""),
-            "condition": "new",
-            "price": price,
-            "old_price": getattr(product, "old_price", 0),
-            "price_on_request": price_on_request,
-            "stock": getattr(product, "stock", 0),
-            "is_available": getattr(product, "is_available", None),
-            "brand": getattr(product, "brand", ""),
+            "image": (
+                product.main_image.url
+                if product.main_image
+                else ""
+            ),
+
+            # No corresponding fields currently exist in Product.
+            "category": "",
+            "location": "",
+            "condition": "",
+            "brand": "",
+
+            "price": product.price,
+            "old_price": product.old_price,
+            "price_on_request": (
+                    product.price_on_request
+                    or product.price is None
+            ),
+            "stock": product.stock,
+            "is_available": product.is_available,
+
             "gallery": [
-                img.image.url
-                for img in product.gallery_images.all()
-                if img.image
+                image.image.url
+                for image in product.gallery_images.all()
+                if image.image
             ],
+
             "specs": [
                 {
-                    "label": feature.name,
+                    "label": feature.name or "",
                     "value": feature.value,
                 }
                 for feature in product.features.all()
             ],
+
             "seller": {
-                "company": getattr(seller, "name", "") if seller else "",
+                "company": seller.name if seller else "",
                 "phone": seller.phone if seller else "",
-                "location": "کرج",
-                "verified": True,
-                "rating": "5",
+                "website": seller.website if seller else "",
+                "location": "",
+                "verified": None,
+                "rating": "",
             },
+
             "is_in_cart": (
                 product.cart_items.filter(cart=cart).exists()
                 if cart
@@ -258,88 +444,117 @@ class ProductDetailView(DetailView):
             ),
         }
 
-        return data
-
     def build_related_products(self, limit=3):
         current = self.object
 
         others = (
             Product.objects
             .filter(is_active=True)
-            .exclude(pk=current.pk)  # بجز محصول فعلی
-            .select_related()
-            .prefetch_related("gallery_images", "features", "sellers")
-            .order_by("-id")[:limit]  # سه آیتم آخر/جدیدترین
+            .exclude(pk=current.pk)
+            .order_by("-created_at")[:limit]
         )
 
         data = []
-        for product in others:
-            seller = product.sellers.first()
 
+        for product in others:
             data.append({
                 "id": product.pk,
                 "title": product.title,
                 "slug": product.slug,
                 "desc": product.summary,
-                "image": product.main_image.url if product.main_image else "",
-                "condition": "new",
+                "image": (
+                    product.main_image.url
+                    if product.main_image
+                    else ""
+                ),
+                "condition": "",
                 "price": product.price,
+                "old_price": product.old_price,
                 "price_on_request": (
-                        bool(product.price_on_request)
+                        product.price_on_request
                         or product.price is None
                 ),
-                "stock": getattr(product, "stock", 0),
-                "is_available": getattr(product, "is_available", None),
-                "category": getattr(product, "category", ""),
+                "stock": product.stock,
+                "is_available": product.is_available,
             })
 
         return data
 
     def build_product_structured_data(self):
         product = self.object
+        product_url = self.get_product_url(product)
 
         data = {
             "@context": "https://schema.org",
             "@type": "Product",
+            "@id": f"{product_url}#product",
             "name": product.title,
-            "sku": product.sku,
+            "url": product_url,
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": product_url,
+            },
         }
+
+        if product.sku:
+            data["sku"] = product.sku
 
         if product.summary:
             data["description"] = product.summary
 
+        images = []
+
         if product.main_image:
-            data["image"] = [
-                self.request.build_absolute_uri(product.main_image.url)
-            ]
+            images.append(
+                self.request.build_absolute_uri(
+                    product.main_image.url
+                )
+            )
 
-        # محصولات دارای قیمت مشخص
-        if not product.price_on_request and product.price is not None:
-            if (
-                    product.is_active
-                    and product.is_available
-                    and product.stock > 0
-            ):
-                availability = "https://schema.org/InStock"
-            else:
-                availability = "https://schema.org/OutOfStock"
+        for image in product.gallery_images.all():
+            if image.image:
+                images.append(
+                    self.request.build_absolute_uri(
+                        image.image.url
+                    )
+                )
 
-            data["offers"] = {
-                "@type": "Offer",
-                "url": self.request.build_absolute_uri(self.request.path),
-                "price": int(product.price) * 10,
-                "priceCurrency": "IRR",
-                "availability": availability,
-            }
+        if images:
+            data["image"] = images
 
-        # جلوگیری از تفسیر محتوای محصول به‌عنوان HTML داخل script
-        json_data = json.dumps(data, ensure_ascii=False)
+        offer_data = self.build_offer_data(product)
 
-        json_data = (
-            json_data
-            .replace("<", "\\u003C")
-            .replace(">", "\\u003E")
-            .replace("&", "\\u0026")
-        )
+        if offer_data:
+            data["offers"] = offer_data
 
-        return mark_safe(json_data)
+        return self.serialize_json_ld(data)
+
+    def build_breadcrumb_json_ld(self):
+        product_url = self.get_product_url(self.object)
+
+        data = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "خانه",
+                    "item": f"{self.get_site_url()}/",
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "محصولات",
+                    "item": urljoin(self.get_site_url() + "/", reverse("shop:product_list").lstrip("/")),
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": self.object.title,
+                    "item": product_url,
+                },
+            ],
+        }
+
+        return self.serialize_json_ld(data)

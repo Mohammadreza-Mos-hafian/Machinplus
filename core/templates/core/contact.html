@@ -5,9 +5,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>تماس با ما | تماس با ما</title>
+    <title>تماس با ما | ماشین پلاس</title>
     <meta name="description"
-          content="مقالات تخصصی درباره خرید ماشین‌آلات صنعتی، نگهداری و تعمیرات، تحلیل بازار و فناوری‌های نوین تولید به زبان فارسی."/>
+          content="برای دریافت مشاوره، ثبت درخواست تأمین ماشین‌آلات صنعتی و ارتباط با تیم ماشین پلاس از طریق راه‌های ارتباطی ما اقدام کنید."/>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link rel="stylesheet"
@@ -19,7 +19,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
 
     <link rel="canonical" href="{% canonical_url %}">
-    {% include "includes/social_meta.html" %}
+
+    {% include "includes/organization_schema.html" %}
+    {% include "includes/contact_schema.html" %}
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
