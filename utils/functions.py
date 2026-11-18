@@ -31,3 +31,10 @@ def get_user_cart(request):
         cart = None
 
     return cart
+
+
+def toman_to_rial(price):
+    if price is None:
+        return None
+
+    return price * 10
