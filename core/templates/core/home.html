@@ -41,8 +41,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'site/css/fonts.css' %}">
 
     <link rel="canonical" href="{% canonical_url %}">
     {% include "includes/social_meta.html" %}
@@ -63,12 +62,14 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .text-balance {
-            text-wrap: balance;
+        h1 span {
+            min-height: 5.8rem !important;
+            padding-top: 1rem;
         }
 
-        .pulse-dot {
-            animation: pulse-dot 1.2s infinite ease-in-out;
+
+        .text-balance {
+            text-wrap: balance;
         }
 
         @keyframes pulse-dot {

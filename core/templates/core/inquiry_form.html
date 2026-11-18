@@ -25,13 +25,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'site/medias/180x180.png' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'site/css/fonts.css' %}">
 
     <link rel="canonical" href="{% canonical_url %}">
     {% include "includes/social_meta.html" %}
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'site/css/tailwind.css' %}">
     <style>
         :root {
             --navy-950: #0B1620;
