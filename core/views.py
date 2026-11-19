@@ -149,7 +149,6 @@ def custom_404(request, exception):
         status=404,
         context={
             "page_title": "صفحه پیدا نشد",
-            "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
         },
     )
 
@@ -161,7 +160,6 @@ def custom_500(request):
         status=500,
         context={
             "page_title": "خطای داخلی سرور",
-            "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
         },
     )
 

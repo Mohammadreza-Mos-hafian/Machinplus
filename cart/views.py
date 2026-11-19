@@ -27,6 +27,16 @@ def get_cart_summary(cart):
     subtotal: جمع قیمت محصولات دارای قیمت مشخص
     has_unpriced_items: وجود محصول نیازمند استعلام قیمت
     """
+
+    if cart is None:
+        return {
+            'items': [],
+            'items_count': 0,
+            'total_quantity': 0,
+            'subtotal': Decimal('0'),
+            'has_unpriced_items': False,
+        }
+
     items = list(
         cart.items.select_related('product').all()
     )
