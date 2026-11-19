@@ -10,6 +10,8 @@ from django.views.generic import ListView, DetailView
 from shop.models import Product, Seller
 from utils.functions import get_user_cart, toman_to_rial
 
+from core.image_processing import get_responsive_image_data
+
 
 class ProductStructuredDataMixin:
     """Shared helpers for product URLs and structured data."""
@@ -163,19 +165,26 @@ class ProductListView(ProductStructuredDataMixin, ListView):
         for product in products:
             seller = product.sellers.first()
 
+            image_data = get_responsive_image_data(
+                product.main_image
+            )
+
             data.append({
                 "id": product.pk,
                 "title": product.title,
                 "slug": product.slug,
                 "desc": product.summary,
-                "image": (
-                    product.main_image.url
-                    if product.main_image
-                    else ""
+
+                "image": image_data["src"],
+                "image_srcset": image_data["srcset"],
+                "image_sizes": (
+                    "(max-width: 639px) calc(100vw - 2rem), "
+                    "(max-width: 767px) calc(100vw - 3rem), "
+                    "(max-width: 1023px) calc((100vw - 6rem) / 3), "
+                    "(max-width: 1279px) calc((100vw - 7rem) / 3), "
+                    "389px"
                 ),
 
-                # These fields are retained for frontend compatibility.
-                # They remain empty because Product has no such fields.
                 "category": "",
                 "location": "",
                 "condition": "",
@@ -357,6 +366,12 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
             cart.items.count() if cart else 0
         )
 
+        main_image_data = get_responsive_image_data(
+            product.main_image
+        )
+
+        context["main_image_data"] = main_image_data
+
         context["product_json"] = self.build_product_data()
         context["related_json"] = self.build_related_products()
 
@@ -388,18 +403,36 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
         seller = product.sellers.first()
         cart = get_user_cart(self.request)
 
+        main_image = get_responsive_image_data(
+            product.main_image
+        )
+
+        gallery = []
+
+        for image in product.gallery_images.all():
+            if not image.image:
+                continue
+
+            image_data = get_responsive_image_data(image.image)
+
+            gallery.append({
+                "src": image_data["src"],
+                "srcset": image_data["srcset"],
+                "sizes": "100vw",
+            })
+
         return {
             "id": product.pk,
             "slug": product.slug,
             "title": product.title,
             "desc": product.summary,
-            "image": (
-                product.main_image.url
-                if product.main_image
-                else ""
+
+            "image": main_image["src"],
+            "image_srcset": main_image["srcset"],
+            "image_sizes": (
+                "(max-width: 1023px) 100vw, 50vw"
             ),
 
-            # No corresponding fields currently exist in Product.
             "category": "",
             "location": "",
             "condition": "",
@@ -414,11 +447,7 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
             "stock": product.stock,
             "is_available": product.is_available,
 
-            "gallery": [
-                image.image.url
-                for image in product.gallery_images.all()
-                if image.image
-            ],
+            "gallery": gallery,
 
             "specs": [
                 {
@@ -457,16 +486,23 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
         data = []
 
         for product in others:
+            image_data = get_responsive_image_data(
+                product.main_image
+            )
+
             data.append({
                 "id": product.pk,
                 "title": product.title,
                 "slug": product.slug,
                 "desc": product.summary,
-                "image": (
-                    product.main_image.url
-                    if product.main_image
-                    else ""
+
+                "image": image_data["src"],
+                "image_srcset": image_data["srcset"],
+                "image_sizes": (
+                    "(max-width: 767px) 100vw, "
+                    "(max-width: 1279px) 50vw, 33vw"
                 ),
+
                 "condition": "",
                 "price": product.price,
                 "old_price": product.old_price,

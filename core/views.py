@@ -8,18 +8,32 @@ from blog.models import Magazine
 from core.models import ChatMessage, InquiryForm
 from shop.models import Product
 from utils.gpt import gpt_request
+from utils.functions import get_year
+
+from core.image_processing import get_responsive_image_data
 
 
-# Create your views here.
 def home(request):
     products = Product.objects.filter(is_active=True)[:3]
     articles = Magazine.objects.filter(status="published")[:3]
 
+    for product in products:
+        product.image_data = get_responsive_image_data(
+            product.main_image
+        )
+
+    for article in articles:
+        article.image_data = get_responsive_image_data(
+            article.cover_image
+        )
+
     context = {
         "products": products,
-        "articles": articles
+        "articles": articles,
+        "year": get_year()
     }
-    return render(request, 'core/home.html', context=context)
+
+    return render(request, "core/home.html", context)
 
 
 @csrf_exempt

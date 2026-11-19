@@ -11,6 +11,8 @@ from urllib.parse import urljoin
 
 from .models import Category, Magazine
 
+from core.image_processing import get_responsive_image_data
+
 
 def get_reading_minutes(text):
     word_count = len(re.findall(r'\w+', text))
@@ -100,34 +102,45 @@ class MagazineListView(ListView):
     def build_articles_data(self, articles):
         data = []
 
-        site_url = self.get_site_url()
-
         for art in articles:
-            image_url = ""
-
-            if art.cover_image:
-                image_url = urljoin(
-                    f"{site_url}/",
-                    art.cover_image.url.lstrip("/")
-                )
+            image_data = get_responsive_image_data(art.cover_image)
 
             data.append({
                 "id": art.id,
                 "slug": art.slug,
                 "title": art.title,
                 "excerpt": art.summary or "",
-                "image": image_url,
+
+                "image": image_data["src"],
+                "image_srcset": image_data["srcset"],
+
+                # اندازه تصویر در کارت مقالات
+                "image_sizes": (
+                    "(max-width: 639px) calc(100vw - 2rem), "
+                    "(max-width: 1279px) calc((100vw - 3rem) / 2), "
+                    "392px"
+                ),
+
+                # اندازه تصویر در مقاله ویژه
+                "featured_image_sizes": (
+                    "(max-width: 1023px) calc(100vw - 2rem), "
+                    "640px"
+                ),
+
                 "category": art.category.title if art.category else "",
                 "author": "مجله ماشین پلاس",
                 "authorRole": "مجله ماشین پلاس",
+
                 "date": (
                     art.published_at.strftime("%Y-%m-%d")
                     if art.published_at else ""
                 ),
+
                 "dateFa": (
                     to_jalali_str(art.published_at)
                     if art.published_at else ""
                 ),
+
                 "readingMinutes": get_reading_minutes(art.body),
                 "tags": [tag.name for tag in art.tags.all()],
             })
@@ -216,7 +229,10 @@ class MagazineDetailView(DetailView):
 
         article = self.object
 
-        context["article_json"] = self.build_article_data()
+        main_image_data = get_responsive_image_data(article.cover_image)
+
+        context["main_image_data"] = main_image_data
+        context["article_json"] = self.build_article_data(main_image_data)
         context["related_articles_json"] = self.build_related_articles(limit=3)
 
         context["seo_title"] = article.title
@@ -249,21 +265,36 @@ class MagazineDetailView(DetailView):
 
         return context
 
-    def build_article_data(self):
+    def build_article_data(self, image_data=None):
         art = self.object
+
+        if image_data is None:
+            image_data = get_responsive_image_data(art.cover_image)
+
         return {
             "id": art.id,
             "slug": art.slug,
+            "detail_url": reverse(
+                "blog:detail",
+                kwargs={"slug": art.slug}
+            ),
             "title": art.title,
             "excerpt": art.summary or "",
-            "image": art.cover_image.url if art.cover_image else "",
+            "image": image_data["src"],
+            "image_srcset": image_data["srcset"],
+            "image_sizes": (
+                "(max-width: 1023px) calc(100vw - 2rem), 976px"
+            ),
             "category": art.category.title if art.category else "",
             "author": "مجله ماشین پلاس",
             "authorRole": "مجله ماشین پلاس",
-            "date": art.published_at.strftime("%Y-%m-%d") if art.published_at else "",
+            "date": (
+                art.published_at.strftime("%Y-%m-%d")
+                if art.published_at else ""
+            ),
             "dateFa": to_jalali_str(art.published_at),
             "readingMinutes": get_reading_minutes(art.body),
-            "tags": [tag.name for tag in art.tags.all()] if hasattr(art, 'tags') else [],
+            "tags": [tag.name for tag in art.tags.all()],
             "body": [{
                 "type": "html",
                 "content": art.body
@@ -272,6 +303,7 @@ class MagazineDetailView(DetailView):
 
     def build_related_articles(self, limit=3):
         current = self.object
+
         related_qs = (
             Magazine.objects.filter(
                 status="published",
@@ -280,37 +312,57 @@ class MagazineDetailView(DetailView):
             )
             .exclude(pk=current.pk)
             .select_related("writer", "category")
+            .prefetch_related("tags")
             .order_by("-published_at")[:limit]
         )
+
         if not related_qs.exists():
             related_qs = (
                 Magazine.objects.filter(
-                    status="published", published_at__lte=timezone.now()
+                    status="published",
+                    published_at__lte=timezone.now()
                 )
                 .exclude(pk=current.pk)
                 .select_related("writer", "category")
+                .prefetch_related("tags")
                 .order_by("-published_at")[:limit]
             )
 
         data = []
+
         for item in related_qs:
-            writer_name = item.writer.get_full_name() or item.writer.username
-            data.append(
-                {
-                    "id": item.id,
-                    "slug": item.slug,
-                    "title": item.title,
-                    "excerpt": item.summary or "",
-                    "image": item.cover_image.url if item.cover_image else "",
-                    "category": item.category.title if item.category else "",
-                    "author": "مجله ماشین پلاس",
-                    "authorRole": "مجله ماشین پلاس",
-                    "date": item.published_at.strftime("%Y-%m-%d") if item.published_at else "",
-                    "dateFa": to_jalali_str(item.published_at),
-                    "readingMinutes": get_reading_minutes(item.body),
-                    "tags": [tag.name for tag in item.tags.all()] if hasattr(item, 'tags') else [],
-                }
-            )
+            image_data = get_responsive_image_data(item.cover_image)
+
+            data.append({
+                "id": item.id,
+                "slug": item.slug,
+                "detail_url": reverse(
+                    "blog:detail",
+                    kwargs={"slug": item.slug}
+                ),
+                "title": item.title,
+                "excerpt": item.summary or "",
+
+                "image": image_data["src"],
+                "image_srcset": image_data["srcset"],
+                "image_sizes": (
+                    "(max-width: 639px) calc(100vw - 2rem), "
+                    "(max-width: 1279px) calc((100vw - 3rem) / 2), "
+                    "392px"
+                ),
+
+                "category": item.category.title if item.category else "",
+                "author": "مجله ماشین پلاس",
+                "authorRole": "مجله ماشین پلاس",
+
+                "date": (
+                    item.published_at.strftime("%Y-%m-%d")
+                    if item.published_at else ""
+                ),
+                "dateFa": to_jalali_str(item.published_at),
+                "readingMinutes": get_reading_minutes(item.body),
+                "tags": [tag.name for tag in item.tags.all()],
+            })
 
         return data
 
