@@ -402,6 +402,48 @@
             }
 
         }
+
+        /* Mobile Hamburger Menu */
+        #mobile-menu > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        #mobile-menu > summary {
+            list-style: none;
+        }
+
+        #mobile-menu .menu-close-icon {
+            display: none;
+        }
+
+        #mobile-menu[open] .menu-open-icon {
+            display: none;
+        }
+
+        #mobile-menu[open] .menu-close-icon {
+            display: block;
+        }
+
+        #mobile-menu .mobile-menu-panel {
+            display: none;
+        }
+
+        #mobile-menu[open] .mobile-menu-panel {
+            display: block;
+            animation: mobile-menu-expand 0.25s ease-out;
+        }
+
+        @keyframes mobile-menu-expand {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 
     {% block extra_head %}{% endblock %}
@@ -409,72 +451,134 @@
 
 <body class="bg-background text-foreground">
 
-<header class="error-header sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur-md">
-    <div class="error-header-inner mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+<header class="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-md">
+    <div class="relative mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
 
-        <a href="{% url 'core:home' %}" class="error-brand flex items-center gap-2">
-            <span class="error-brand-icon grid h-8 w-8 place-items-center rounded-lg bg-primary text-white font-extrabold">
-                م+
-            </span>
-            <span class="error-brand-title font-extrabold text-foreground">ماشین پلاس</span>
+        <!-- Logo -->
+        <a href="{% url 'core:home' %}"
+           class="flex shrink-0 items-center gap-2">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-primary font-extrabold text-white">م+</span>
+            <span class="font-extrabold text-foreground">ماشین پلاس</span>
         </a>
 
-        <nav class="desktop-nav hidden items-center gap-6 text-sm text-[#5b6478] md:flex">
+        <!-- Desktop Navigation -->
+        <nav class="hidden items-center gap-5 text-sm text-muted-foreground md:flex lg:gap-6">
             <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
-            <a href="{% url 'shop:product_list' %}" class="font-semibold text-foreground">فروشگاه</a>
+            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-foreground">فروشگاه</a>
             <a href="{% url 'blog:list' %}" class="transition-colors hover:text-foreground">مجله</a>
             <a href="{% url 'core:contact-us' %}" class="transition-colors hover:text-foreground">تماس با ما</a>
         </nav>
 
-        <div class="error-header-actions flex items-center gap-4">
+        <!-- Desktop Actions -->
+        <div class="hidden shrink-0 items-center gap-4 md:flex">
 
             <a href="{% url 'core:inquiry' %}"
-               aria-label="مشاوره رایگان"
-               class="error-consultation inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-soft hover:bg-primary-dark sm:text-sm">
-
-                <svg viewBox="0 0 24 24"
-                     class="h-4 w-4 shrink-0"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2.5"
-                     stroke-linecap="round">
+               class="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-sm font-bold text-white shadow-soft transition hover:bg-primary-dark">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none"
+                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
-
-                <span>مشاوره رایگان</span>
+                مشاوره رایگان
             </a>
 
             <a href="{% url 'cart:cart_detail' %}"
                aria-label="سبد خرید"
-               class="cart-header-icon relative inline-flex shrink-0 items-center justify-center no-underline">
-
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     viewBox="0 0 32 32"
-                     fill="none"
-                     aria-hidden="true"
-                     class="error-cart-icon w-8 h-8">
-
-                    <path d="M2.5 4H5L8.2 7.5"
-                          stroke="#D69B35" stroke-width="2"
+               class="cart-header-icon relative inline-flex items-center justify-center no-underline">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
+                     fill="none" aria-hidden="true">
+                    <path d="M2.5 4H5L8.2 7.5" stroke="#D69B35" stroke-width="2"
                           stroke-linecap="round" stroke-linejoin="round"/>
-
                     <path d="M8.2 7.5H29L26.2 19.5H11L8.2 7.5Z"
                           stroke="currentColor" stroke-width="2"
                           stroke-linecap="round" stroke-linejoin="round"/>
-
-                    <path d="M14 10.5L15 17M20 10.5L20 17M25 10.5L24 17"
-                          stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round"/>
-
+                    <path d="M14 10.5L15 17 M20 10.5L20 17 M25 10.5L24 17"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     <circle cx="13" cy="25" r="1.8" fill="#D69B35"/>
                     <circle cx="24" cy="25" r="1.8" fill="#D69B35"/>
                 </svg>
-
-                <span class="cart-count absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
+                <span class="cart-count absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 pt-[3px] text-[10px] font-bold text-white">
                     {{ cart_items_count|default:0|persian_numbers }}
                 </span>
             </a>
+        </div>
 
+        <!-- Mobile Actions -->
+        <div class="flex shrink-0 items-center gap-3 md:hidden">
+
+            <a href="{% url 'cart:cart_detail' %}"
+               aria-label="سبد خرید"
+               class="cart-header-icon relative inline-flex items-center justify-center no-underline">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
+                     fill="none" aria-hidden="true">
+                    <path d="M2.5 4H5L8.2 7.5" stroke="#D69B35" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.2 7.5H29L26.2 19.5H11L8.2 7.5Z"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 10.5L15 17 M20 10.5L20 17 M25 10.5L24 17"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="13" cy="25" r="1.8" fill="#D69B35"/>
+                    <circle cx="24" cy="25" r="1.8" fill="#D69B35"/>
+                </svg>
+                <span class="cart-count absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 pt-[3px] text-[10px] font-bold text-white">
+                    {{ cart_items_count|persian_numbers }}
+                </span>
+            </a>
+
+            <!-- Hamburger -->
+            <details id="mobile-menu" class="shrink-0">
+                <summary aria-label="باز و بسته کردن منو"
+                         class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-xl border border-border bg-white text-foreground transition hover:bg-surface-muted">
+                    <svg class="menu-open-icon h-6 w-6" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round">
+                        <path d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+
+                    <svg class="menu-close-icon h-6 w-6" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round">
+                        <path d="m18 6-12 12M6 6l12 12"/>
+                    </svg>
+                </summary>
+
+                <!-- Mobile Accordion Menu -->
+                <nav class="mobile-menu-panel absolute inset-x-0 top-full z-[60] w-full border-t border-border bg-white shadow-elevated md:hidden">
+                    <div class="mx-auto flex w-full max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
+
+                        <a href="{% url 'core:home' %}"
+                           class="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition hover:bg-surface-muted">
+                            خانه
+                        </a>
+
+                        <a href="{% url 'shop:product_list' %}"
+                           class="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition hover:bg-surface-muted">
+                            فروشگاه
+                        </a>
+
+                        <a href="{% url 'blog:list' %}"
+                           class="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition hover:bg-surface-muted">
+                            مجله
+                        </a>
+
+                        <a href="{% url 'core:contact-us' %}"
+                           class="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition hover:bg-surface-muted">
+                            تماس با ما
+                        </a>
+
+                        <div class="my-2 border-t border-border"></div>
+
+                        <a href="{% url 'core:inquiry' %}"
+                           class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-soft transition hover:bg-primary-dark">
+                            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none"
+                                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                            </svg>
+                            مشاوره رایگان
+                        </a>
+                    </div>
+                </nav>
+            </details>
         </div>
     </div>
 </header>

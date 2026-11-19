@@ -175,29 +175,138 @@
                 transition: none;
             }
         }
+
+
+        /* Responsive Mobile Accordion Menu */
+
+        #mobile-menu > summary {
+            list-style: none;
+        }
+
+        #mobile-menu > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        #mobile-menu .menu-close-icon {
+            display: none;
+        }
+
+        #mobile-menu[open] .menu-open-icon {
+            display: none;
+        }
+
+        #mobile-menu[open] .menu-close-icon {
+            display: block;
+        }
+
+        #mobile-menu .mobile-menu-panel {
+            display: none;
+        }
+
+        #mobile-menu[open] .mobile-menu-panel {
+            display: block;
+            animation: mobile-menu-expand 0.25s ease-out;
+        }
+
+        @keyframes mobile-menu-expand {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #mobile-menu[open] .mobile-menu-panel {
+                animation: none;
+            }
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
 <!-- HEADER -->
+
+<!-- HEADER -->
 <header class="navy-grad header-safe sticky top-0 z-40 border-b border-white/5">
-    <div class="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-lg gold-grad flex items-center justify-center font-display text-sm"
-                 style="color:#20140A">م+
-            </div>
-            <span class="font-display text-white text-[15px] md:text-base">ماشین پلاس</span>
-        </div>
-        <nav class="hidden md:flex items-center gap-7 text-[13.5px] text-slate-300">
-            <a href="{% url 'core:home' %}" class="transition-colors hover:text-foreground">خانه</a>
-            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-foreground">فروشگاه</a>
-            <a href="{% url 'blog:list' %}" class="text-foreground">مجله</a>
-            <a href="{% url 'blog:list' %}" class="text-foreground">درباره ما</a>
-            <a href="{% url 'blog:list' %}" class="text-foreground">تماس با ما</a>
+    <div class="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5 md:px-8">
+
+        <!-- Logo -->
+        <a href="{% url 'core:home' %}" class="flex shrink-0 items-center gap-2.5">
+            <span class="flex h-9 w-9 items-center justify-center rounded-lg gold-grad font-display text-sm"
+                  style="color:#20140A">م+</span>
+            <span class="font-display text-[15px] text-white md:text-base">ماشین پلاس</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden items-center gap-7 text-[13.5px] text-slate-300 md:flex">
+            <a href="{% url 'core:home' %}" class="transition-colors hover:text-amber-300">خانه</a>
+            <a href="{% url 'shop:product_list' %}" class="transition-colors hover:text-amber-300">فروشگاه</a>
+            <a href="{% url 'blog:list' %}" class="transition-colors hover:text-amber-300">مجله</a>
+            <a href="{% url 'core:contact-us' %}" class="transition-colors hover:text-amber-300">تماس با ما</a>
         </nav>
-        <button class="text-[13px] font-semibold px-4 py-2 rounded-lg hover:brightness-105 transition"
-                style="color:#20140A">
-        </button>
+
+        <!-- Mobile Hamburger -->
+        <details id="mobile-menu" class="shrink-0 md:hidden">
+            <summary aria-label="باز و بسته کردن منو"
+                     class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10">
+
+                <!-- Open Icon -->
+                <svg class="menu-open-icon h-6 w-6" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+
+                <!-- Close Icon -->
+                <svg class="menu-close-icon h-6 w-6" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round">
+                    <path d="m18 6-12 12M6 6l12 12"/>
+                </svg>
+            </summary>
+
+            <!-- Accordion Menu -->
+            <nav class="mobile-menu-panel absolute inset-x-0 top-full z-[60] w-full border-t border-white/10 navy-grad shadow-2xl md:hidden">
+                <div class="mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-4 md:px-8">
+
+                    <a href="{% url 'core:home' %}"
+                       class="rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/10 hover:text-amber-300">
+                        خانه
+                    </a>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/10 hover:text-amber-300">
+                        فروشگاه
+                    </a>
+
+                    <a href="{% url 'blog:list' %}"
+                       class="rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/10 hover:text-amber-300">
+                        مجله
+                    </a>
+
+                    <a href="{% url 'core:contact-us' %}"
+                       class="rounded-xl px-4 py-3 text-sm text-slate-200 transition hover:bg-white/10 hover:text-amber-300">
+                        تماس با ما
+                    </a>
+
+                    <div class="my-2 border-t border-white/10"></div>
+
+                    <a href="{% url 'core:inquiry' %}"
+                       class="gold-grad flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold"
+                       style="color:#20140A">
+                        مشاوره رایگان
+                    </a>
+
+                </div>
+            </nav>
+        </details>
+
     </div>
 </header>
 
