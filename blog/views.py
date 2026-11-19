@@ -10,9 +10,10 @@ from django.views.generic import DetailView, ListView
 from urllib.parse import urljoin
 
 from .models import Category, Magazine
-from utils.functions import get_year
+from utils.functions import get_year, get_user_cart
 
 from core.image_processing import get_responsive_image_data
+from cart.views import get_cart_summary
 
 
 def get_reading_minutes(text):
@@ -97,7 +98,7 @@ class MagazineListView(ListView):
         )
 
         context["collection_json_ld"] = serialized_data
-
+        context["cart_items_count"] = get_cart_summary(get_user_cart(self.request))["items_count"]
         context["year"] = get_year()
 
         return context
@@ -266,6 +267,7 @@ class MagazineDetailView(DetailView):
             article_url=article_url,
         )
 
+        context["cart_items_count"] = get_cart_summary(get_user_cart(self.request))["items_count"]
         context["year"] = get_year()
 
         return context

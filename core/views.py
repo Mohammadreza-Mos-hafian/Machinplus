@@ -5,10 +5,11 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 
 from blog.models import Magazine
+from cart.views import get_cart_summary
 from core.models import ChatMessage, InquiryForm
 from shop.models import Product
 from utils.gpt import gpt_request
-from utils.functions import get_year
+from utils.functions import get_year, get_user_cart
 
 from core.image_processing import get_responsive_image_data
 
@@ -72,7 +73,8 @@ def inquiry_view(request):
 
 def contact_view(request):
     context = {
-        "year": get_year()
+        "year": get_year(),
+        "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
     }
 
     return render(request, 'core/contact.html', context=context)
@@ -80,7 +82,8 @@ def contact_view(request):
 
 def terms(request):
     context = {
-        "year": get_year()
+        "year": get_year(),
+        "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
     }
 
     return render(request, 'core/terms.html', context=context)
@@ -146,6 +149,7 @@ def custom_404(request, exception):
         status=404,
         context={
             "page_title": "صفحه پیدا نشد",
+            "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
         },
     )
 
@@ -157,6 +161,7 @@ def custom_500(request):
         status=500,
         context={
             "page_title": "خطای داخلی سرور",
+            "cart_items_count": get_cart_summary(get_user_cart(request))["items_count"],
         },
     )
 
