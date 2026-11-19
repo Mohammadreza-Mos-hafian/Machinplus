@@ -51,10 +51,11 @@ INSTALLED_APPS = [
     "ckeditor_uploader",
     "axes",
     "csp",
+    "imagekit",
 
     # Manual apps
     "account",
-    "core",
+    "core.apps.CoreConfig",
     "blog",
     "crm",
     "shop",
@@ -242,3 +243,7 @@ if not DEBUG:
             "script-src": [SELF],
         },
     }
+
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = (
+    "imagekit.cachefiles.strategies.Optimistic"
+)
