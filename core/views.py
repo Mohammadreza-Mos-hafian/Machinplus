@@ -63,15 +63,27 @@ def inquiry_view(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': 'خطا در ثبت اطلاعات', 'details': str(e)}, status=400)
 
-    return render(request, 'core/inquiry_form.html')
+    context = {
+        "year": get_year()
+    }
+
+    return render(request, 'core/inquiry_form.html', context=context)
 
 
 def contact_view(request):
-    return render(request, 'core/contact.html')
+    context = {
+        "year": get_year()
+    }
+
+    return render(request, 'core/contact.html', context=context)
 
 
 def terms(request):
-    return render(request, 'core/terms.html')
+    context = {
+        "year": get_year()
+    }
+
+    return render(request, 'core/terms.html', context=context)
 
 
 @require_POST
@@ -118,7 +130,7 @@ def chatbot_view(request):
     if request.user.is_authenticated:
         messages = ChatMessage.objects.filter(user=request.user)
     context = {
-        "messages": messages
+        "messages": messages,
     }
     return render(request, 'core/chatbot.html', context=context)
 

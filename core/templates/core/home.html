@@ -127,8 +127,13 @@
 
     <!-- Hero -->
     <section class="relative isolate overflow-hidden">
-        <img src="{% static 'site/medias/bg.jpg' %}" alt=" کارخانه و ماشین‌آلات صنعتی"
-             class="absolute inset-0 -z-10 h-full w-full object-cover"/>
+        <img
+                src="{% static 'site/medias/bg.jpg' %}"
+                alt="کارخانه و ماشین‌آلات صنعتی"
+                fetchpriority="high"
+                decoding="async"
+                class="absolute inset-0 -z-10 h-full w-full object-cover"
+        />
         <div class="absolute inset-0 -z-10 bg-gradient-to-b from-primary-dark/70 via-primary-dark/80 to-primary-dark/95"></div>
         <div class="absolute inset-0 -z-10"
              style="background:radial-gradient(ellipse at top,rgba(217,142,4,.18),transparent 60%)"></div>
@@ -249,7 +254,7 @@
     </section>
 
     <!-- Production banner -->
-    <section class="relative isolate min-h-[560px] overflow-hidden">
+    <section id="benefits" class="relative isolate min-h-[560px] overflow-hidden">
         <img src="{% static 'site/medias/bg.jpg' %}"
              alt="خط تولید مدرن صنعتی" class="absolute inset-0 -z-10 h-full w-full object-cover"/>
         <div class="absolute inset-0 -z-10 bg-gradient-to-l from-primary-dark/95 via-primary-dark/80 to-primary-dark/25"></div>
@@ -293,10 +298,24 @@
                 {% for product in products %}
                     <article
                             class="group overflow-hidden rounded-2xl border border-border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-elevated">
-                        <div class="aspect-[4/3] overflow-hidden"><img
-                                src="{{ product.main_image.url }}"
-                                alt="{{ product.title }}"
-                                class="h-full w-full object-cover transition duration-700 group-hover:scale-105"/></div>
+                        <
+                        <div class="aspect-[4/3] overflow-hidden">
+                            {% if product.image_data.src %}
+                                <img
+                                        src="{{ product.image_data.src }}"
+                                        {% if product.image_data.srcset %}
+                                        srcset="{{ product.image_data.srcset }}"
+                                        {% endif %}
+                                        {% if product.image_data.srcset %}
+                                        sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc((100vw - 3rem) / 2), 400px"
+                                        {% endif %}
+                                        alt="{{ product.title }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                                />
+                            {% endif %}
+                        </div>
                         <div class="p-6">
                             <h3 class="mt-2 text-xl font-extrabold text-foreground">{{ product.title }}</h3>
                             <span class="text-xs font-bold text-accent">{{ product.summary|truncatechars:15 }}</span>
@@ -321,7 +340,7 @@
     </section>
 
     <!-- Articles -->
-    <section id="benefits" class="border-y border-border bg-surface-muted py-20 sm:py-28">
+    <section class="border-y border-border bg-surface-muted py-20 sm:py-28">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
                 <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -332,10 +351,23 @@
                 {% for article in articles %}
                     <article
                             class="group overflow-hidden rounded-2xl border border-border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-elevated">
-                        <div class="aspect-[16/10] overflow-hidden"><img
-                                src="{{ article.cover_image.url }}"
-                                alt="{{ article.title }}"
-                                class="h-full w-full object-cover transition duration-700 group-hover:scale-105"/></div>
+                        <div class="aspect-[16/10] overflow-hidden">
+                            {% if article.image_data.src %}
+                                <img
+                                        src="{{ article.image_data.src }}"
+                                        {% if article.image_data.srcset %}
+                                        srcset="{{ article.image_data.srcset }}"
+                                        {% endif %}
+                                        {% if article.image_data.srcset %}
+                                        sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc((100vw - 3rem) / 2), 400px"
+                                        {% endif %}
+                                        alt="{{ article.title }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                                />
+                            {% endif %}
+                        </div>
                         <div class="p-6"><h3
                                 class="text-lg font-extrabold leading-8 text-foreground">{{ article.title }}</h3>
                             <p class="mt-2 text-sm leading-7 text-muted-foreground">{{ article.summary }}</p>
@@ -568,7 +600,8 @@
         loadChat();
     });
 
-    const toFa = (n) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
+    const year = "{{ year | persian_numbers }}"
+
     const QUICK = ["خرید ماشین‌آلات", "تامین قطعات", "درخواست خدمات", "یافتن تامین‌کننده", "مشاوره خرید"];
 
     const cats = [
@@ -595,7 +628,7 @@
         {v: "۹۸٪", l: "رضایت از تطبیق درخواست"},
         {v: "۲۴/۷", l: "در دسترس بودن دستیار"},
     ];
-    document.getElementById('footer-copy').textContent = `© ${toFa(new Date().getFullYear())} ماشین پلاس — تمامی حقوق محفوظ است.`;
+    document.getElementById('footer-copy').textContent = `© ${year} ماشین پلاس — تمامی حقوق محفوظ است.`;
 
     // Empty-state prompts
     document.getElementById('empty-prompts').innerHTML = QUICK.map(p => `<button data-quick="${p}" class="quick rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:-translate-y-0.5 hover:border-accent/40 hover:bg-accent/5 transition-all">${p}</button>`).join('');

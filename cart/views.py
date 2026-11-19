@@ -15,7 +15,7 @@ from django.utils import timezone
 from shop.models import Product
 from .services import get_cart_for_request, release_order_stock
 from .models import Cart, CartItem, Order, OrderItem
-from utils.functions import get_safe_redirect_url, get_user_cart
+from utils.functions import get_safe_redirect_url, get_user_cart, get_year
 
 
 def get_cart_summary(cart):
@@ -117,7 +117,6 @@ def get_owned_order(request, order_id):
     return None
 
 
-
 class CartDetailView(TemplateView):
     template_name = 'cart.html'
 
@@ -139,8 +138,8 @@ class CartDetailView(TemplateView):
 
                 # فقط سفارش دارای زمان انقضای گذشته، منقضی است.
                 if (
-                    order.expires_at
-                    and order.expires_at <= timezone.now()
+                        order.expires_at
+                        and order.expires_at <= timezone.now()
                 ):
                     order = release_order_stock(order.pk)
 
@@ -156,8 +155,8 @@ class CartDetailView(TemplateView):
                         # اگر توکن Session متعلق به همین سفارش است،
                         # برای Checkout بعدی توکن جدید ایجاد می‌کنیم.
                         if (
-                            str(request.session.get('checkout_token'))
-                            == str(order.checkout_token)
+                                str(request.session.get('checkout_token'))
+                                == str(order.checkout_token)
                         ):
                             request.session['checkout_token'] = str(
                                 uuid.uuid4()
@@ -205,6 +204,7 @@ class CartDetailView(TemplateView):
         cart = get_user_cart(self.request)
 
         context['cart'] = cart
+        context["year"] = get_year()
 
         if not cart:
             context.update({
@@ -329,6 +329,8 @@ class CheckoutView(TemplateView):
             'checkout_token': self.request.session.get('checkout_token'),
             'form_data': self.form_data,
         })
+
+        context["year"] = get_year()
 
         return context
 
@@ -741,6 +743,8 @@ class PaymentView(TemplateView):
             'payment_available': False,
             'cart_items_count': cart_items_count,
         })
+
+        context["year"] = get_year()
 
         return context
 

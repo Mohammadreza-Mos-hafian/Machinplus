@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.views.generic import ListView, DetailView
 
 from shop.models import Product, Seller
-from utils.functions import get_user_cart, toman_to_rial
+from utils.functions import get_user_cart, toman_to_rial, get_year
 
 from core.image_processing import get_responsive_image_data
 
@@ -154,6 +154,8 @@ class ProductListView(ProductStructuredDataMixin, ListView):
         context["product_collection_json_ld"] = (
             self.serialize_json_ld(collection_data)
         )
+
+        context["year"] = get_year()
 
         return context
 
@@ -395,6 +397,8 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
             if product.main_image
             else ""
         )
+
+        context["year"] = get_year()
 
         return context
 

@@ -1,4 +1,4 @@
-{% load static %}{% load seo_tags %}
+{% load static %}{% load seo_tags %}{% load number_filters %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -287,7 +287,7 @@
 </main>
 
 <footer class="mt-10 border-t border-border bg-white py-8">
-    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۵ ماشین پلاس —
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© {{ year | persian_numbers }} ماشین پلاس —
         مجله صنعت
     </div>
 </footer>

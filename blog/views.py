@@ -10,6 +10,7 @@ from django.views.generic import DetailView, ListView
 from urllib.parse import urljoin
 
 from .models import Category, Magazine
+from utils.functions import get_year
 
 from core.image_processing import get_responsive_image_data
 
@@ -96,6 +97,8 @@ class MagazineListView(ListView):
         )
 
         context["collection_json_ld"] = serialized_data
+
+        context["year"] = get_year()
 
         return context
 
@@ -262,6 +265,8 @@ class MagazineDetailView(DetailView):
             article=article,
             article_url=article_url,
         )
+
+        context["year"] = get_year()
 
         return context
 

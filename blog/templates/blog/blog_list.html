@@ -1,4 +1,4 @@
-{% load static %}{% load seo_tags %}
+{% load static %}{% load seo_tags %}{% load number_filters %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -308,7 +308,8 @@
 </main>
 
 <footer class="mt-10 border-t border-border bg-white py-8">
-    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۵ ماشین پلاس —
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">
+        © {{ year | persian_numbers }} ماشین پلاس —
         مجله صنعت
     </div>
 </footer>
@@ -345,12 +346,20 @@
   <span aria-hidden="true">•</span><span>${p.author}</span></div>`;
 
     const card = (p) => `<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated">
-  <a href="blog-detail.html?slug=${p.slug}" class="relative block overflow-hidden">
-    <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-    <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">${catLabel(p.category)}</span>
+  <a href="/blog/${p.slug}" class="relative block overflow-hidden">
+  <img
+        src="${p.image || ''}"
+        ${p.image_srcset ? `srcset="${p.image_srcset}"` : ''}
+        ${p.image_sizes ? `sizes="${p.image_sizes}"` : ''}
+        alt="${p.title}"
+        loading="lazy"
+        decoding="async"
+        class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+  />
+  <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">${catLabel(p.category)}</span>
   </a>
   <div class="flex flex-1 flex-col p-5">
-    <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="blog-detail.html?slug=${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
+    <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="/blog/${p.slug}${p.slug}" class="relative block overflow-hidden"></h3>
     <p class="mt-2 line-clamp-3 flex-1 text-sm leading-7 text-muted-foreground">${p.excerpt}</p>
     ${meta(p, "mt-4 border-t border-border pt-4")}
   </div></article>`;
@@ -358,7 +367,16 @@
     const featuredCard = (p) => `<article class="group overflow-hidden rounded-3xl border border-border bg-white shadow-soft transition-all hover:shadow-elevated">
   <div class="grid grid-cols-1 lg:grid-cols-2">
     <a href="/blog/${p.slug}" class="block overflow-hidden">
-      <img src="${p.image}" alt="${p.title}" class="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105 lg:h-full lg:min-h-[320px]" />
+    <img
+        src="${p.image || ''}"
+        ${p.image_srcset ? `srcset="${p.image_srcset}"` : ''}
+        ${p.featured_image_sizes ? `sizes="${p.featured_image_sizes}"` : ''}
+        alt="${p.title}"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        class="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105 lg:h-full lg:min-h-[320px]"
+    />
     </a>
     <div class="flex flex-col justify-center p-6 sm:p-8">
       <div class="flex flex-wrap items-center gap-2 text-xs">

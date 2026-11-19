@@ -1,4 +1,4 @@
-{% load static %}{% load seo_tags %}
+{% load static %}{% load seo_tags %}{% load number_filters %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -272,7 +272,7 @@
 <!-- FOOTER -->
 <footer class="border-t border-white/5" style="background:var(--navy-950)">
     <div class="max-w-6xl mx-auto px-5 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[12.5px] text-slate-500">
-        <span>© 2026 ماشین پلاس. تمامی حقوق محفوظ است.</span>
+        <span>© {{ year | persian_numbers }} ماشین پلاس. تمامی حقوق محفوظ است.</span>
         <div class="flex items-center gap-5">
             <a href="{% url 'core:home' %}" class="hover:text-slate-300 transition-colors">صفحه اصلی</a>
             <a href="{% url 'core:terms' %}" class="hover:text-slate-300 transition-colors">قوانین و مقررات</a>

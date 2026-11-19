@@ -348,7 +348,8 @@
 </div>
 
 <footer class="mt-10 border-t border-border bg-white py-8">
-    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۳ ماشین پلاس —
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">
+        © {{ year | persian_numbers }} ماشین پلاس —
         فروشگاه هوشمند صنعت
     </div>
 </footer>
@@ -357,6 +358,7 @@
 
 <script>
     const toFa = n => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
+    const year = toFa({{ year }})
 
     const CATEGORIES = [
         {id: "all", label: "همه دسته‌ها"},
@@ -439,6 +441,23 @@
 
     const CSRF_TOKEN = "{{ csrf_token }}";
 
+
+    function escapeHTML(value) {
+        const entities = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        };
+
+        return String(value ?? '').replace(
+            /[&<>"']/g,
+            char => entities[char]
+        );
+    }
+
+
     function card(p) {
         const priceOnRequest =
             p.price_on_request === true ||
@@ -449,130 +468,122 @@
             Number(p.stock) <= 0 ||
             !p.is_available;
 
-        let article = `
-        <article class="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated">
+        const slug = encodeURIComponent(String(p.slug || ''));
 
-            <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
-                <img
-                    src="${p.image || ''}"
-                    alt="${p.title}"
-                    loading="lazy"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+        const productUrl = `/shop/products/${slug}/`;
 
-                <div class="absolute right-3 top-3 flex gap-1.5">
-                    <span class="rounded-full px-2.5 py-1 text-[10px] font-bold shadow-soft ${
-            p.condition === 'new'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-amber-500 text-white'
-        }">
-                        ${p.condition === 'new' ? 'نو' : 'کارکرده'}
-                    </span>
-                </div>
+        const title = escapeHTML(p.title);
+        const description = escapeHTML(p.desc);
+        const brand = escapeHTML(p.brand);
+        const image = escapeHTML(p.image);
+        const imageSrcset = escapeHTML(p.image_srcset);
+        const imageSizes = escapeHTML(p.image_sizes);
 
-                <div class="absolute bottom-3 right-3 rounded-lg bg-black/60 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
-                    ${p.brand || ''}
-                </div>
-            </div>
+        const condition = p.condition === 'new'
+            ? 'نو'
+            : 'کارکرده';
 
-            <div class="flex flex-1 flex-col p-5">
+        const conditionClass = p.condition === 'new'
+            ? 'bg-emerald-500'
+            : 'bg-amber-500';
 
-                <h3 class="text-base font-bold leading-7 text-foreground">
-                    ${p.title}
-                </h3>
+        const specs = (p.specs || [])
+            .slice(0, 4)
+            .map((spec, index) => `
+            <tr class="${index ? 'border-t border-border' : ''}">
+                <td class="w-1/2 px-3 py-2.5 text-xs text-muted-foreground">
+                    ${escapeHTML(spec.label)}
+                </td>
 
-                <p class="mt-1.5 line-clamp-2 text-xs leading-6 text-muted-foreground">
-                    ${p.desc || ''}
-                </p>
+                <td class="px-3 py-2.5 text-left text-xs font-semibold text-foreground"
+                    dir="ltr">
+                    ${escapeHTML(spec.value)}
+                </td>
+            </tr>
+        `)
+            .join('');
 
-                <div class="mt-4 overflow-hidden rounded-xl border border-border bg-surface-muted">
-                    <table class="w-full text-xs">
-                        <tbody>
-                            ${(p.specs || []).slice(0, 4).map((s, i) => `
-                                <tr class="${i ? 'border-t border-border' : ''}">
-                                    <td class="w-1/2 px-3 py-2 text-muted-foreground">
-                                        ${s.label}
-                                    </td>
-                                    <td class="px-3 py-2 text-left font-semibold text-foreground" dir="ltr">
-                                        ${s.value}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 flex items-center justify-between gap-2">
-                    <span class="text-[10px] text-muted-foreground">
-                        قیمت
-                    </span>
-
-                    ${
-            priceOnRequest
-                ? `
-                                <span class="text-sm font-extrabold text-amber-600">
-                                    استعلام قیمت
-                                </span>
-                            `
-                : `
-                                <span class="text-base font-extrabold ${
-                    unavailable ? 'text-muted-foreground' : 'text-primary'
-                }">
-                                    ${
-                    unavailable
-                        ? 'ناموجود'
-                        : formatPersianNumber(p.price) + ' تومان'
-                }
-                                </span>
-                            `
-        }
-                </div>
-
-                <div class="mt-4 grid grid-cols-1 gap-2">
-
-                    <a
-                        href="/shop/products/${p.slug}/"
-                        class="rounded-xl border border-border bg-white px-3 py-2.5 text-center text-xs font-bold text-foreground hover:border-primary/40 hover:bg-primary/5"
-                    >
-                        ${priceOnRequest ? 'مشاهده و استعلام قیمت' : 'مشاهده محصول'}
-                    </a>
-    `;
+        let priceHTML = '';
 
         if (priceOnRequest) {
-            article += `
-            <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-center text-xs font-semibold text-amber-700">
-                برای اطلاع از قیمت با فروشنده تماس بگیرید.
-            </div>
-        `;
-        } else if (unavailable) {
-            article += `
-            <button
-                type="button"
-                disabled
-                class="rounded-xl border border-border bg-muted-foreground px-3 py-2.5 text-center text-xs font-bold text-white"
-            >
-                ناموجود
-            </button>
-        `;
-        } else if (p.is_in_cart) {
-            article += `
-            <button
-                type="button"
-                disabled
-                class="rounded-xl border border-border bg-emerald-600 px-3 py-2.5 text-center text-xs font-bold text-white"
-            >
-                در سبد خرید شما موجود است
-            </button>
+            priceHTML = `
+            <span class="text-sm font-extrabold text-amber-600">
+                استعلام قیمت
+            </span>
         `;
         } else {
-            article += `
-            <form method="post" action="{% url 'cart:add_to_cart' %}">
-                <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
-                <input type="hidden" name="product_id" value="${p.id}">
+            priceHTML = `
+            <span class="text-base font-extrabold ${
+                unavailable
+                    ? 'text-muted-foreground'
+                    : 'text-primary'
+            }">
+                ${
+                unavailable
+                    ? 'ناموجود'
+                    : formatPersianNumber(p.price) + ' تومان'
+            }
+            </span>
+        `;
+        }
+
+        let actionHTML = '';
+
+        if (priceOnRequest) {
+            actionHTML += `
+        <a
+            href="${p.seller_phone ? `tel:${p.seller_phone}` : `/shop/products/${p.slug}/`}"
+            class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm font-bold text-amber-700 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.79a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.34 1.83.58 2.79.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+
+            ${p.seller_phone ? 'تماس با فروشنده' : 'مشاهده اطلاعات تماس'}
+        </a>
+    `;
+        } else if (unavailable) {
+            actionHTML = `
+            <div class="flex min-h-11 items-center justify-center rounded-xl border border-border bg-surface-muted px-3 py-2.5 text-center text-xs font-bold text-muted-foreground">
+                این محصول در حال حاضر موجود نیست.
+            </div>
+        `;
+        } else if (p.is_in_cart) {
+            actionHTML = `
+            <div class="flex min-h-11 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-center text-xs font-bold text-emerald-700">
+                این محصول در سبد خرید شما موجود است.
+            </div>
+        `;
+        } else {
+            actionHTML = `
+            <form method="post"
+                  action="{% url 'cart:add_to_cart' %}">
+
+                <input
+                    type="hidden"
+                    name="csrfmiddlewaretoken"
+                    value="${CSRF_TOKEN}"
+                >
+
+                <input
+                    type="hidden"
+                    name="product_id"
+                    value="${Number(p.id)}"
+                >
 
                 <button
                     type="submit"
-                    class="w-full rounded-xl border border-border bg-primary px-3 py-2.5 text-center text-xs font-bold text-white hover:bg-primary-dark"
+                    class="flex min-h-11 w-full items-center justify-center rounded-xl border border-primary bg-primary px-3 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                     افزودن به سبد خرید
                 </button>
@@ -580,13 +591,119 @@
         `;
         }
 
-        article += `
+        return `
+        <article
+            class="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elevated"
+        >
+
+            <!-- Main product link -->
+            <a
+                href="${productUrl}"
+                aria-label="مشاهده محصول ${title}"
+                class="relative flex flex-1 flex-col after:absolute after:inset-0 after:z-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+            >
+
+                <!-- Product image -->
+                <div class="relative aspect-[4/3] overflow-hidden bg-surface-muted">
+
+                    ${
+            image
+                ? `
+                                <img
+                                    src="${image}"
+                                    ${imageSrcset ? `srcset="${imageSrcset}"` : ''}
+                                    ${imageSizes ? `sizes="${imageSizes}"` : ''}
+                                    alt="${title}"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                >
+                            `
+                : `
+                                <div class="flex h-full items-center justify-center text-sm text-muted-foreground">
+                                    تصویری برای این محصول ثبت نشده است.
+                                </div>
+                            `
+        }
+
+                    <!-- Product condition -->
+                    <div class="absolute right-3 top-3 z-0">
+                        <span class="inline-flex rounded-full ${conditionClass} px-3 py-1.5 text-xs font-bold text-white shadow-soft">
+                            ${condition}
+                        </span>
+                    </div>
+
+                    <!-- Brand -->
+                    ${
+            brand
+                ? `
+                                <div class="absolute bottom-3 right-3 z-0 rounded-lg bg-black/65 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+                                    ${brand}
+                                </div>
+                            `
+                : ''
+        }
+
                 </div>
+
+                <!-- Product information -->
+                <div class="flex flex-1 flex-col p-5">
+
+                    <h3 class="text-base font-bold leading-7 text-foreground">
+                        ${title}
+                    </h3>
+
+                    <p class="mt-1.5 line-clamp-2 min-h-12 text-sm leading-6 text-muted-foreground">
+                        ${description}
+                    </p>
+
+                    <!-- Specifications -->
+                    ${
+            specs
+                ? `
+                                <div class="mt-4 overflow-hidden rounded-xl border border-border bg-surface-muted">
+                                    <table class="w-full text-xs">
+                                        <tbody>
+                                            ${specs}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `
+                : ''
+        }
+
+                    <!-- Price -->
+                    <div class="mt-auto flex items-center justify-between gap-3 pt-5">
+
+                        <span class="text-xs font-medium text-muted-foreground">
+                            قیمت
+                        </span>
+
+                        ${priceHTML}
+
+                    </div>
+
+                    ${
+            priceOnRequest
+                ? `
+                                <p class="mt-3 text-xs leading-6 text-muted-foreground">
+                                    برای دریافت اطلاعات بیشتر، جزئیات محصول را مشاهده کنید.
+                                </p>
+                            `
+                : ''
+        }
+
+                </div>
+
+            </a>
+
+            <!-- Independent action -->
+            <div class="relative z-10 px-5 pb-5 pt-0">
+                ${actionHTML}
             </div>
+
         </article>
     `;
-
-        return article;
     }
 
 

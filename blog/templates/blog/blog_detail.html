@@ -1,4 +1,4 @@
-{% load static %}{% load seo_tags %}{% load json_ld %}
+{% load static %}{% load seo_tags %}{% load json_ld %}{% load number_filters %}
 
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -35,6 +35,19 @@
     {% endif %}
 
     <link rel="stylesheet" href="{% static 'site/css/tailwind.css' %}">
+
+    {% if main_image_data.src %}
+        <link
+                rel="preload"
+                as="image"
+                href="{{ main_image_data.src }}"
+                {% if main_image_data.srcset %}
+                imagesrcset="{{ main_image_data.srcset }}"
+                {% endif %}
+                imagesizes="(max-width: 1023px) calc(100vw - 2rem), 976px"
+                fetchpriority="high"
+        >
+    {% endif %}
 
     <style>
         html, body {
@@ -231,7 +244,8 @@
 <div id="app"></div>
 
 <footer class="mt-10 border-t border-border bg-white py-8">
-    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">© ۱۴۰۵ ماشین پلاس —
+    <div class="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">
+        © {{ year | persian_numbers }} ماشین پلاس —
         مجله صنعت
     </div>
 </footer>
@@ -255,13 +269,14 @@
         "id": "market",
         "label": "بازار و اقتصاد صنعت"
     }, {"id": "tech", "label": "فناوری و هوش مصنوعی"}];
-    const BLOG_POSTS = JSON.parse(document.getElementById("related-data").textContent);
 
     const faNum = (n) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
     const catLabel = (id) => (BLOG_CATEGORIES.find(c => c.id === id) || {}).label || id;
 
-    const slug = ""
-    const post = JSON.parse(document.getElementById("article-data").textContent);
+
+    const post = JSON.parse(
+        document.getElementById("article-data").textContent
+    );
     const app = document.getElementById("app");
 
     if (!post) {
@@ -298,8 +313,9 @@
         const shareUrl = location.href;
         const shareBtn = (label, href, svg) => `<a href="${href}" target="_blank" rel="noopener noreferrer" aria-label="${label}" title="${label}" class="grid h-9 w-9 place-items-center rounded-lg border border-border bg-white text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary">${svg}</a>`;
 
-        const others = JSON.parse(document.getElementById("related-data").textContent);
-        const related = JSON.parse(document.getElementById("related-data").textContent);
+        const related = JSON.parse(
+            document.getElementById("related-data").textContent
+        );
 
         const meta = (p, cls) => `<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground ${cls}">
     <time datetime="${p.date}" class="font-semibold text-foreground">${p.dateFa}</time>
@@ -307,12 +323,24 @@
     <span aria-hidden="true">•</span><span>${p.author}</span></div>`;
 
         const card = (p) => `<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated">
-    <a href="/blog/${p.slug}" class="relative block overflow-hidden">
-      <img src="${p.image}" alt="${p.title}" loading="lazy" class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+    <a href="${p.detail_url}" class="relative block overflow-hidden">
+      <img
+            src="${p.image || ''}"
+            ${p.image_srcset ? `srcset="${p.image_srcset}"` : ''}
+            ${p.image_sizes ? `sizes="${p.image_sizes}"` : ''}
+            alt="${p.title}"
+            loading="lazy"
+            decoding="async"
+            class="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
       <span class="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">${catLabel(p.category)}</span>
     </a>
     <div class="flex flex-1 flex-col p-5">
-      <h3 class="text-base font-extrabold leading-8 text-foreground"><a href="/blog/${p.slug}" class="transition-colors hover:text-primary">${p.title}</a></h3>
+      <h3 class="text-base font-extrabold leading-8 text-foreground">
+        <a href="${p.detail_url}" class="transition-colors hover:text-primary">
+            ${p.title}
+        </a>
+      </h3>
       <p class="mt-2 line-clamp-3 flex-1 text-sm leading-7 text-muted-foreground">${p.excerpt}</p>
       ${meta(p, "mt-4 border-t border-border pt-4")}
     </div></article>`;
@@ -341,7 +369,18 @@
         </div>
       </div>
       <div class="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
-        <img src="${post.image}" alt="${post.title}" class="h-56 w-full rounded-3xl object-cover shadow-elevated sm:h-96" />
+        ${post.image ? `
+            <img
+                src="${post.image}"
+                ${post.image_srcset ? `srcset="${post.image_srcset}"` : ''}
+                ${post.image_sizes ? `sizes="${post.image_sizes}"` : ''}
+                alt="${post.title}"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                class="h-56 w-full rounded-3xl object-cover shadow-elevated sm:h-96"
+            />
+        ` : ''}
       </div>
     </header>
 
