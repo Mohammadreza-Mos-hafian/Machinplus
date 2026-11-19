@@ -1,6 +1,8 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+import jdatetime
+
 from django.shortcuts import redirect
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils import timezone
 
 from cart.models import Cart
 
@@ -38,3 +40,12 @@ def toman_to_rial(price):
         return None
 
     return price * 10
+
+
+def get_year():
+    current_date = timezone.localdate()
+    jalali_date = jdatetime.date.fromgregorian(
+        date=current_date
+    )
+
+    return jalali_date.year
