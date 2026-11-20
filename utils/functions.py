@@ -3,8 +3,9 @@ import jdatetime
 from django.shortcuts import redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
+from django.core.validators import ValidationError
 
-from cart.models import Cart
+from cart.models import Cart, Order
 
 
 def get_safe_redirect_url(request):
@@ -49,3 +50,12 @@ def get_year():
     )
 
     return jalali_date.year
+
+
+def validate_vendee_info(data, field_name: str):
+    field = Order._meta.get_field(field_name.strip())
+
+    try:
+        field.clean(data, None)
+    except ValidationError:
+        raise

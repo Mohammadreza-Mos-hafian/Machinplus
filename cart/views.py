@@ -1,4 +1,5 @@
 import uuid
+
 from datetime import timedelta
 from decimal import Decimal
 
@@ -14,8 +15,8 @@ from django.utils import timezone
 
 from shop.models import Product
 from .services import get_cart_for_request, release_order_stock
-from .models import Cart, CartItem, Order, OrderItem
-from utils.functions import get_safe_redirect_url, get_user_cart, get_year
+from .models import CartItem, Order, OrderItem
+from utils.functions import get_safe_redirect_url, get_user_cart, get_year, validate_vendee_info
 
 
 def get_cart_summary(cart):
@@ -369,6 +370,33 @@ class CheckoutView(TemplateView):
                     self.get_context_data()
                 )
 
+        # اعتبارسنجی نام و نام خانوادگی
+        if self.form_data['first_name'] and self.form_data['last_name']:
+            try:
+                validate_vendee_info(self.form_data['first_name'], 'first_name')
+                validate_vendee_info(self.form_data['last_name'], 'last_name')
+            except ValidationError as err:
+                messages.error(
+                    request,
+                    err.messages[0]
+                )
+                return self.render_to_response(
+                    self.get_context_data()
+                )
+
+        # اعتبارسنجی شماره تماس
+        if self.form_data['phone']:
+            try:
+                validate_vendee_info(self.form_data['phone'], 'phone')
+            except ValidationError as err:
+                messages.error(
+                    request,
+                    err.messages[0]
+                )
+                return self.render_to_response(
+                    self.get_context_data()
+                )
+
         # اعتبارسنجی ایمیل
         if self.form_data['email']:
             try:
@@ -377,6 +405,19 @@ class CheckoutView(TemplateView):
                 messages.error(
                     request,
                     'آدرس ایمیل معتبر نیست.'
+                )
+                return self.render_to_response(
+                    self.get_context_data()
+                )
+
+        # اعتبارسنجی کدپستی
+        if self.form_data['postal_code']:
+            try:
+                validate_vendee_info(self.form_data['postal_code'], 'postal_code')
+            except ValidationError as err:
+                messages.error(
+                    request,
+                    err.messages[0]
                 )
                 return self.render_to_response(
                     self.get_context_data()
