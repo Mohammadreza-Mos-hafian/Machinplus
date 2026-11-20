@@ -3,7 +3,22 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
+
+phone_validator = RegexValidator(
+    regex=r'^09\d{9}$',
+    message='شماره موبایل معتبر وارد کنید.'
+)
+
+postal_code_validator = RegexValidator(
+    regex=r'^[0-9]{10}$',
+    message='کد پستی باید دقیقاً 10 رقم انگلیسی باشد.'
+)
+
+persian_name_validator = RegexValidator(
+    regex=r'^[آ-ی‌ ءئؤؤإأ]+$',
+    message='نام و نام خانوادگی باید فقط شامل حروف فارسی باشد.'
+)
 
 
 def generate_order_number():
@@ -139,16 +154,25 @@ class Order(models.Model):
     first_name = models.CharField(
         max_length=100,
         verbose_name='نام',
+        validators=[
+            persian_name_validator,
+        ],
     )
 
     last_name = models.CharField(
         max_length=100,
         verbose_name='نام خانوادگی',
+        validators=[
+            persian_name_validator,
+        ],
     )
 
     phone = models.CharField(
         max_length=15,
         verbose_name='شماره تماس',
+        validators=[
+            phone_validator,
+        ],
     )
 
     email = models.EmailField(
@@ -159,6 +183,9 @@ class Order(models.Model):
     postal_code = models.CharField(
         max_length=10,
         verbose_name='کد پستی',
+        validators=[
+            postal_code_validator,
+        ],
     )
 
     recipient = models.CharField(
