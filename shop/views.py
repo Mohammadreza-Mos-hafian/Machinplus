@@ -187,9 +187,9 @@ class ProductListView(ProductStructuredDataMixin, ListView):
                     "389px"
                 ),
 
-                "category": "",
+                "category": product.category.code,
                 "location": "",
-                "condition": "",
+                "condition": product.status,
                 "brand": "",
 
                 "price": product.price,
@@ -430,7 +430,6 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
             "slug": product.slug,
             "title": product.title,
             "desc": product.summary,
-
             "image": main_image["src"],
             "image_srcset": main_image["srcset"],
             "image_sizes": (
@@ -439,7 +438,7 @@ class ProductDetailView(ProductStructuredDataMixin, DetailView):
 
             "category": "",
             "location": "",
-            "condition": "",
+            "condition": product.status,
             "brand": "",
 
             "price": product.price,

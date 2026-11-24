@@ -6,8 +6,51 @@ from django.db.models import Q, F
 from django.utils.text import slugify
 
 
-# Create your models here.
+class ProductCategory(models.Model):
+    code = models.CharField(
+        max_length=32,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='کد اختصاصی'
+    )
+
+    name = models.CharField(
+        max_length=32,
+        verbose_name='نام دسته بندی',
+    )
+
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='توضیحات',
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد',
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='تاریخ آخرین بروزرسانی',
+    )
+
+    class Meta:
+        verbose_name = "دسته‌بندی"
+        verbose_name_plural = "دسته‌بندی‌ها"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
+    STATUS_CHOICES = [
+        ('new', 'نو'),
+        ('used', 'کارکرده'),
+    ]
+
     title = models.CharField(
         max_length=255,
         verbose_name="عنوان محصول"
@@ -28,6 +71,15 @@ class Product(models.Model):
         unique=True,
         null=True,
         verbose_name='کد اختصاصی'
+    )
+
+    category = models.ForeignKey(
+        ProductCategory,
+        related_name='products',
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
+        verbose_name='دسته بندی',
     )
 
     main_image = models.ImageField(
@@ -77,6 +129,14 @@ class Product(models.Model):
     price_on_request = models.BooleanField(
         default=False,
         verbose_name='قیمت با استعلام'
+    )
+
+    status = models.CharField(
+        max_length=8,
+        choices=STATUS_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name='وضعیت',
     )
 
     is_available = models.BooleanField(

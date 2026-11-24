@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Product, ProductFeature, ProductImage, Seller
+from .models import Product, ProductFeature, ProductImage, Seller, ProductCategory
 
 
 class ProductImageInline(admin.TabularInline):
@@ -49,11 +49,13 @@ class ProductAdmin(admin.ModelAdmin):
         "seller_count",
         "feature_count",
         "gallery_image_count",
+        "category",
         "is_available",
         "stock",
         "price",
         "old_price",
         "price_on_request",
+        "status",
         "is_active",
         "created_at",
     )
@@ -86,6 +88,7 @@ class ProductAdmin(admin.ModelAdmin):
         "sku",
         "title",
         "slug",
+        "category",
         "main_image",
         "main_image_preview",
         "summary",
@@ -96,6 +99,7 @@ class ProductAdmin(admin.ModelAdmin):
         "price",
         "old_price",
         "price_on_request",
+        "status",
         "is_active",
         "seller_count",
         "feature_count",
@@ -231,3 +235,14 @@ class ProductFeatureAdmin(admin.ModelAdmin):
         "display_order",
         "id",
     )
+
+
+@admin.register(ProductCategory)
+class ProductCategoryAdmin(admin.ModelAdmin):
+    list_display = ("code", "name", "products_count", "description", "created_at")
+    search_fields = ("code", "name", "description")
+    list_per_page = 20
+
+    @admin.display(description="تعداد محصولات")
+    def products_count(self, obj):
+        return obj.products.count()
