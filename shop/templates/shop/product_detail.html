@@ -439,8 +439,8 @@
 
                 {% if product.price_on_request %}
 
-                    <a id="seller-phone"
-                       class="rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-soft hover:bg-primary-dark">
+                    <a
+                            class="seller-phone rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-soft hover:bg-primary-dark">
                         تماس با فروشنده
                     </a>
 
@@ -563,8 +563,8 @@
                     </div>
                 </div>
                 <div class="mt-4 grid grid-cols-1 gap-2">
-                    <a id="seller-phone"
-                       class="rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-soft hover:bg-primary-dark">
+                    <a
+                            class=" seller-phone rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-soft hover:bg-primary-dark">
                         تماس با فروشنده
                     </a>
                 </div>
@@ -591,6 +591,61 @@
         هوشمند صنعت
     </div>
 </footer>
+
+
+<!-- Purchase Notice Modal -->
+<div
+        id="purchase-notice"
+        class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="purchase-notice-title"
+>
+    <div class="relative w-full max-w-md rounded-2xl bg-white p-7 text-center shadow-2xl">
+
+        <button
+                type="button"
+                id="close-purchase-notice"
+                aria-label="بستن"
+                class="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-surface-muted text-muted-foreground hover:bg-border"
+        >
+            ✕
+        </button>
+
+        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="32" height="32"
+                 viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M12 9v4"/>
+                <path d="M12 17h.01"/>
+                <path d="M10.3 3.9 1.8 18.2a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>
+            </svg>
+        </div>
+
+        <h2 id="purchase-notice-title"
+            class="text-xl font-extrabold text-foreground">
+            اطلاعیه مهم خرید
+        </h2>
+
+        <p class="mt-4 text-sm leading-8 text-muted-foreground">
+            برای خرید محصولات و اطلاع از قیمت و شرایط فروش،
+            لطفاً پیش از ثبت سفارش با کارشناسان ماشین پلاس تماس بگیرید.
+        </p>
+
+        <button
+                type="button"
+                id="confirm-purchase-notice"
+                class="mt-6 w-full rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-primary-dark"
+        >
+            متوجه شدم
+        </button>
+    </div>
+</div>
+
 {{ product_json|json_script:"product-data" }}
 {{ related_json|json_script:"related-data" }}
 
@@ -718,7 +773,15 @@
     document.getElementById('seller-company').textContent = product.seller.company;
     document.getElementById('seller-rating').textContent = formatPersianNumber(product.seller.rating);
     document.getElementById('seller-location').textContent = product.seller.location;
-    document.getElementById('seller-phone').href = `tel:${product.seller.phone}`;
+    document.querySelectorAll('.seller-phone').forEach(link => {
+        if (product.seller.phone) {
+            link.href = `tel:${product.seller.phone}`;
+        } else {
+            link.removeAttribute('href');
+            link.classList.add('pointer-events-none', 'opacity-50');
+        }
+    });
+
     if (product.seller.verified) document.getElementById('seller-verified').classList.remove('hidden');
 
     let rel = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0, 3);
@@ -760,6 +823,42 @@
 </span></div>
     </div>
   </a>`).join('');
+
+
+    const purchaseNotice = document.getElementById('purchase-notice');
+
+    function closePurchaseNotice() {
+        purchaseNotice.classList.add('hidden');
+        purchaseNotice.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    function openPurchaseNotice() {
+        purchaseNotice.classList.remove('hidden');
+        purchaseNotice.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('close-purchase-notice')
+        .addEventListener('click', closePurchaseNotice);
+
+    document.getElementById('confirm-purchase-notice')
+        .addEventListener('click', closePurchaseNotice);
+
+    purchaseNotice.addEventListener('click', event => {
+        if (event.target === purchaseNotice) {
+            closePurchaseNotice();
+        }
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closePurchaseNotice();
+        }
+    });
+
+    openPurchaseNotice();
+
 </script>
 </body>
 </html>
